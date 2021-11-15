@@ -21,8 +21,8 @@ soma (a:[]) (b:bs) | a+b >= 10 = mod (a+b) 10: soma [] ((head bs) + (div (a+b) 1
 soma (a:as) (b:bs) | a+b >= 10 = mod (a+b) 10: soma ((head as) + (div (a+b) 10) : tail as) bs
                    | otherwise = a+b  : soma as bs 
 
---somaBN :: BigNumber -> BigNumber -> BigNumber
---somaBN (BN a) (BN b) = BN ( (reverse a) (reverse b) ))
+somaBN :: BigNumber -> BigNumber -> BigNumber
+somaBN (BN a) (BN b) = reverseBN ( BN ( soma (reverse a) (reverse b) ))
 
 
 
