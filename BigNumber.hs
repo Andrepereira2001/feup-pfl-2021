@@ -1,10 +1,39 @@
 module BigNumber
-(BigNumber) where
+(BigNumber, somaBN, subBN, mulBN, divBN, getValueBN, listBN) where
 
 type BigNumber = [Int]
 
 reverseBN :: BigNumber -> BigNumber
 reverseBN a = reverse a
+
+bigger :: [Int] -> [Int] -> Bool
+bigger [] [] = False
+bigger _ [] = True
+bigger [] _ = False
+bigger (a:as) (b:bs) | length as > length bs = True
+                      | length as < length bs = False
+                      | a > b = True
+                      | b > a = False
+                      | otherwise = bigger as bs
+
+biggerEqual :: [Int] -> [Int] -> Bool
+biggerEqual [] [] = True
+biggerEqual _ [] = True
+biggerEqual [] _ = False
+biggerEqual (a:as) (b:bs) | length as > length bs = True
+                      | length as < length bs = False
+                      | a > b = True
+                      | b > a = False
+                      | otherwise = biggerEqual as bs 
+
+getValueBN :: [BigNumber] -> BigNumber -> BigNumber
+getValueBN (l:ls) [] = l
+getValueBN (l:ls) n = getValueBN ls (subBN n [1])  
+
+listBN :: BigNumber -> [BigNumber]
+listBN [] = [[]]
+listBN n = listBN (subBN n [1]) ++ [n]
+
 
 soma :: [Int] -> [Int] -> [Int]
 soma [] [] = []
@@ -26,17 +55,6 @@ somaBN a b | (null a || head a /= 0) && (null b || head b /= 0) = reverse( soma 
            | (not (null a) && head a == 0) && (null b || head b /= 0) = subBN b (tail a)
            | (null a || head a /= 0)  && (not (null b) && head b == 0) = subBN a (tail b)
            | head a == 0 && head b == 0 = (0:reverse( soma (reverse (tail a)) (reverse (tail b)) ))
-
-
-biggerEqual :: [Int] -> [Int] -> Bool
-biggerEqual [] [] = True
-biggerEqual _ [] = True
-biggerEqual [] _ = False
-biggerEqual (a:as) (b:bs) | length as > length bs = True
-                      | length as < length bs = False
-                      | a > b = True
-                      | b > a = False
-                      | otherwise = biggerEqual as bs 
 
 sub :: [Int] -> [Int] -> [Int]
 sub [] [] = []
@@ -67,17 +85,6 @@ mulBN a b | (null a || head a /= 0) && (null b || head b /= 0) = (reverse (mul (
           | (null a || head a /= 0) && (not (null b) && head b == 0) = (0:reverse (mul (reverse a) (reverse (tail b)))) 
           | (not (null a) && head a == 0) && (null b || head b /= 0) = (0:reverse (mul (reverse (tail a)) (reverse b))) 
           | head a == 0 && head b == 0 = (reverse (mul (reverse (tail a)) (reverse (tail b))))
-
-
-bigger :: [Int] -> [Int] -> Bool
-bigger [] [] = False
-bigger _ [] = True
-bigger [] _ = False
-bigger (a:as) (b:bs) | length as > length bs = True
-                      | length as < length bs = False
-                      | a > b = True
-                      | b > a = False
-                      | otherwise = bigger as bs 
 
 divi :: BigNumber -> BigNumber -> BigNumber -> BigNumber -> (BigNumber, BigNumber)
 divi c dd d v | bigger v dd = (subBN c [1], subBN dd (subBN v d)) 
