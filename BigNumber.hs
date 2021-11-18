@@ -97,3 +97,7 @@ divBN a b | null b = error "divide by zero"
           | (null a || head a /= 0) && (not (null b) && head b == 0) = (0:somaBN (fst (divi [] a (tail b) [])) [1], 0:subBN (tail b) (snd (divi [] a (tail b) [])))
           | (not (null a) && head a == 0) && (null b || head b /= 0) = (0:somaBN (fst (divi [] (tail a) b [])) [1], subBN b (snd (divi [] (tail a) b []))) 
           | head a == 0 && head b == 0 = divi [] a b []
+
+safeDivBN :: BigNumber -> BigNumber -> Maybe (BigNumber, BigNumber)
+safeDivBN a b | null b = Nothing
+              | otherwise = Just (divBN a b)
