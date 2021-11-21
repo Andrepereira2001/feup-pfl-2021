@@ -3,8 +3,11 @@ module BigNumber
 
 type BigNumber = [Int]
 
-reverseBN :: BigNumber -> BigNumber
-reverseBN a = reverse a
+scanner :: String -> BigNumber
+scanner = 
+
+output :: BigNumber -> String
+output = 
 
 bigger :: [Int] -> [Int] -> Bool
 bigger [] [] = False

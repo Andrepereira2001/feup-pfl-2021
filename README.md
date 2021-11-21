@@ -40,6 +40,19 @@ To represent the number 0 in BigNumber notation we use the empty array '[]'
 | __Function Description__ | Same as the integral version. The function adopts a __dynamic infinite list__ strategy since he builds a infinite list with all the finobaci numbers. Thanks to haskell properties by asking the _nth_ number he self stops the infite list calculation on the asked index      |
 
 
+| Function             | scanner |
+| ---                  | ---    |
+| __Usage Cases__          | |
+| __Function Description__ | |
+| __Implementation__ | |
+
+| Function             | output |
+| ---                  | ---    |
+| __Usage Cases__          | |
+| __Function Description__ | |
+| __Implementation__ | |
+
+
 | Function             | somaBN |
 | ---                  | ---    |
 | __Usage Cases__          | We tested this function with all kinds of combinations like, positive + positive somaBN [1,0] [2,0] = [3,0], positive + negative somaBN [1,0] [0,2,0] = [0,1,0], sum of numbers that result in more decimal houses somaBN [8,8] [1,3] = [1,0,1], sum of numbers that result in the reduction of decimal houses somaBN [1,5] [0,1,3] = [2], sum with 0 somaBN [1,5] [] = [1,5] and sum resulting in 0 somaBN [0,1,3] [1,3] = []|
@@ -61,15 +74,15 @@ To represent the number 0 in BigNumber notation we use the empty array '[]'
 
 | Function             | divBN |
 | ---                  | ---    |
-| __Usage Cases__          | We tested this function with all the possibel combinations. Positive divided by positive divBN [1,2,3] [2,3] = ([5],[8]), positive divided by negative divBN [5,3,3] [0,5,3] = ([0,1,1],[0,5,0]), negative divided by positive divBN [0,7,3] [7] = ([0,1,1],[4]), negative divided by negative divBN [0,2,4,3] [0,8] = ([3,0],[0,3]). We also tested values where the remain is zero divBN [2,5,6] [8] = ([3,2],[]), when the __divident????__ is smaller then the divisor divBN [2,3] [5,3] = ([],[2,3]), when the __divident????__ is zero divBN [] [4] = ([],[]) and lastely we tested the case when the divisor is zero divBN [5] [] = "Exception: divide by zero" |
-| __Function Description__ | This function takes two BigNumbers returning a tuple with (divisão inteira) and the remain. The division with negative numbers is made just like the `mod` and `div` operators from haskell|
-| __Implementation__ | In order to implement this function we sum the divisor _n_ times until the sum is bigger then the __divident??__, the desired result is _n-1_ for the quocient and the sum minus the divisor for the remainder. In this function to deal with negative numbers and keep the same output as the haskell functions we had the need to make some sums and substrations to the final output of the division |
+| __Usage Cases__          | We tested this function with all the possibel combinations. Positive divided by positive divBN [1,2,3] [2,3] = ([5],[8]), positive divided by negative divBN [5,3,3] [0,5,3] = ([0,1,1],[0,5,0]), negative divided by positive divBN [0,7,3] [7] = ([0,1,1],[4]), negative divided by negative divBN [0,2,4,3] [0,8] = ([3,0],[0,3]). We also tested values where the remainder is zero divBN [2,5,6] [8] = ([3,2],[]), when the dividend is smaller then the divisor divBN [2,3] [5,3] = ([],[2,3]), when the dividend is zero divBN [] [4] = ([],[]) and lastely we tested the case when the divisor is zero divBN [5] [] = "Exception: divide by zero" |
+| __Function Description__ | This function takes two BigNumbers returning a tuple with (divisão inteira) and the remainder. The division with negative numbers is made just like the `mod` and `div` operators from haskell|
+| __Implementation__ | In order to implement this function we sum the divisor _n_ times until the sum is bigger then the dividend, the desired result is _n-1_ for the quocient and the sum minus the divisor for the remainder. In this function to deal with negative numbers and keep the same output as the haskell functions we had the need to make some sums and substrations to the final output of the division |
 
 | Function             | safeDivBN |
 | ---                  | ---    |
-| __Usage Cases__          | |
+| __Usage Cases__          | We test this function with all the cases described in divBN safeDivBN [1,6] [3] = Just ([5],[1]). We also test it when the divisor is zero safeDivBN [1,6] [] = Nothing |
 | __Function Description__ | This function takes two BigNumbers returning their division safely |
-| __Implementation__ | |
+| __Implementation__ | The implementation of this function is just like the `divBN` since we make a call to it. The only difference is the existence of a pattern that checks if the divisor is zero, if so it returns nothing|
 
 
 ## Ex4
