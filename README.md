@@ -1,9 +1,10 @@
 # feup-pfl-2021
 Programação Funcional e Lógica
 
-# IMPORTANT
-In BigNumber representation 0 in the beginning of a array tell us that the number is negative
-The value 0 in BigNumber notation is an empty array '[]' 
+## IMPORTANT
+In BigNumber representation, if the digit 0 appears at the beginning of the array, the BigNumber is negative
+
+To represent the number 0 in BigNumber notation we use the empty array '[]' 
 
 ## Function
 
@@ -53,13 +54,14 @@ The value 0 in BigNumber notation is an empty array '[]'
 
 | Function             | mulBN |
 | ---                  | ---    |
-| __Usage Cases__          | |
+| __Usage Cases__          | We tested this function with all interesting combinations for multiplication, positive * positive mulBN [4,3] [2,3] = [9,8,9], positive * negative mulBN [0,1,2,3] [1,2,3] = [0,1,5,1,2,9], negative * negative mulBN [0,4,3] [0,1,2,1] = [5,2,0,3], also multiplication by 0 is covered mulBN [2,3,4,2] [] |
 | __Function Description__ | This function takes two BigNumbers returning their multiplication |
-| __Implementation__ | |
+| __Implementation__ | To implement this function we first start by inverting the two given BigNumbers. In order to make the multiplication operation we take an recursive aprouch since we sum, the result of the multiplication of all the digits of the first BigNumber with the first digit of the second BigNumber, with the value returned from the recursive call of the `mulBN` with the first BigNumber and the tail of the second BigNumber. To deal with the negative numbers we verify if the numbers have both the same signal, depending on the case the multiplication operation is made with possitive numbers and, at the end, a negative signal is added at the beggining of the BigNumber |
+
 
 | Function             | divBN |
 | ---                  | ---    |
-| __Usage Cases__          | |
+| __Usage Cases__          |  |
 | __Function Description__ | This function takes two BigNumbers returning their division |
 | __Implementation__ | |
 
