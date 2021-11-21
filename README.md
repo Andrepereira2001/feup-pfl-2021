@@ -63,7 +63,7 @@ To represent the number 0 in BigNumber notation we use the empty array '[]'
 | ---                  | ---    |
 | __Usage Cases__          | We tested this function with all the possibel combinations. Positive divided by positive divBN [1,2,3] [2,3] = ([5],[8]), positive divided by negative divBN [5,3,3] [0,5,3] = ([0,1,1],[0,5,0]), negative divided by positive divBN [0,7,3] [7] = ([0,1,1],[4]), negative divided by negative divBN [0,2,4,3] [0,8] = ([3,0],[0,3]). We also tested values where the remain is zero divBN [2,5,6] [8] = ([3,2],[]), when the __divident????__ is smaller then the divisor divBN [2,3] [5,3] = ([],[2,3]), when the __divident????__ is zero divBN [] [4] = ([],[]) and lastely we tested the case when the divisor is zero divBN [5] [] = "Exception: divide by zero" |
 | __Function Description__ | This function takes two BigNumbers returning a tuple with (divisão inteira) and the remain. The division with negative numbers is made just like the `mod` and `div` operators from haskell|
-| __Implementation__ | In order to implement this function we sum the divisor _n_ times until the sum is bigger then the __divident??__, the desired result is _n-1_ and the `subBN` |
+| __Implementation__ | In order to implement this function we sum the divisor _n_ times until the sum is bigger then the __divident??__, the desired result is _n-1_ for the quocient and the sum minus the divisor for the remainder. In this function to deal with negative numbers and keep the same output as the haskell functions we had the need to make some sums and substrations to the final output of the division |
 
 | Function             | safeDivBN |
 | ---                  | ---    |
