@@ -70,8 +70,8 @@ subBN a b | (null a || head a /= 0) && (null b || head b /= 0) && biggerEqual a 
           | (null a || head a /= 0) && (null b || head b /= 0) && (not (biggerEqual a b)) = (0: dropWhile (==0) (reverse (sub (reverse b) (reverse a))))
           | (not (null a) && head a == 0) && (null b || head b /= 0) = 0:reverse (soma ((reverse (tail a))) (reverse (b)))
           | (null a || head a /= 0) && (not (null b) && head b == 0)  = somaBN a (tail b)
-          | head a == 0 && head b == 0 && biggerEqual (tail a) (tail b) = (0:dropWhile (==0) (reverse (sub (reverse (tail a)) (reverse (tail b)))))
-          | head a == 0 && head b == 0 && (not (biggerEqual (tail a) (tail b))) = (dropWhile (==0) (reverse (sub (reverse (tail b)) (reverse (tail a)))))
+          | head a == 0 && head b == 0 && bigger (tail a) (tail b) = (0:dropWhile (==0) (reverse (sub (reverse (tail a)) (reverse (tail b)))))
+          | head a == 0 && head b == 0 && (not (bigger (tail a) (tail b))) = (dropWhile (==0) (reverse (sub (reverse (tail b)) (reverse (tail a)))))
 
 mul :: [Int] -> [Int] -> [Int]
 mul [] [] = []
