@@ -93,9 +93,10 @@ divi c dd d v | bigger v dd = (subBN c [1], subBN dd (subBN v d))
               
 divBN :: BigNumber -> BigNumber -> (BigNumber, BigNumber)
 divBN a b | null b = error "divide by zero" 
-          | (null a || head a /= 0) && (null b || head b /= 0) = divi [] a b []
-          | (null a || head a /= 0) && (not (null b) && head b == 0) = (0:somaBN (fst (divi [] a (tail b) [])) [1], 0:subBN (tail b) (snd (divi [] a (tail b) [])))
-          | (not (null a) && head a == 0) && (null b || head b /= 0) = (0:somaBN (fst (divi [] (tail a) b [])) [1], subBN b (snd (divi [] (tail a) b []))) 
+          | null a = ([], [])
+          | head a /= 0 && head b /= 0 = divi [] a b []
+          | head a /= 0 && head b == 0 = (0:somaBN (fst (divi [] a (tail b) [])) [1], 0:subBN (tail b) (snd (divi [] a (tail b) [])))
+          | head a == 0 && head b /= 0 = (0:somaBN (fst (divi [] (tail a) b [])) [1], subBN b (snd (divi [] (tail a) b []))) 
           | head a == 0 && head b == 0 = divi [] a b []
 
 safeDivBN :: BigNumber -> BigNumber -> Maybe (BigNumber, BigNumber)
