@@ -1,13 +1,19 @@
 module BigNumber
 (BigNumber, somaBN, subBN, mulBN, divBN, getValueBN, listBN) where
 
+import Data.Char(digitToInt, intToDigit)
+
 type BigNumber = [Int]
 
 scanner :: String -> BigNumber
-scanner = 
+scanner "0" = []
+scanner ('-':l) = 0:(scanner l)
+scanner l = [digitToInt(x) | x <- l]
 
 output :: BigNumber -> String
-output = 
+output [] = "0"
+output (0:l) = '-':(output l)
+output l = [intToDigit(x) | x <- l]
 
 bigger :: [Int] -> [Int] -> Bool
 bigger [] [] = False
@@ -36,7 +42,6 @@ getValueBN (l:ls) n = getValueBN ls (subBN n [1])
 listBN :: BigNumber -> [BigNumber]
 listBN [] = [[]]
 listBN n = listBN (subBN n [1]) ++ [n]
-
 
 soma :: [Int] -> [Int] -> [Int]
 soma [] [] = []
