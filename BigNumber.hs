@@ -15,8 +15,10 @@ output [] = "0"
 output (0:l) = '-':(output l)
 output l = [intToDigit(x) | x <- l]
 
-bigger :: [Int] -> [Int] -> Bool
+-- returns true if the first argument number is bigger than the second
+bigger :: [Int] -> [Int] -> Bool 
 bigger [] [] = False
+-- verificar se só se usa quando já não tem o zero  
 bigger _ [] = True
 bigger [] _ = False
 bigger (a:as) (b:bs) | length as > length bs = True
@@ -25,8 +27,10 @@ bigger (a:as) (b:bs) | length as > length bs = True
                       | b > a = False
                       | otherwise = bigger as bs
 
+-- returns true if the first argument number is bigger or equal than the second
 biggerEqual :: [Int] -> [Int] -> Bool
 biggerEqual [] [] = True
+-- verificar se só se usa quando já não tem o zero  
 biggerEqual _ [] = True
 biggerEqual [] _ = False
 biggerEqual (a:as) (b:bs) | length as > length bs = True
@@ -40,10 +44,12 @@ equalBN [] [] = True
 equalBN (a:as) (b:bs) | a == b && length as == length bs = equalBN as bs
                       | otherwise = False
 
+-- search in a list of BigNumber the BigNumber in the position specified in the second argument
 getValueBN :: [BigNumber] -> BigNumber -> BigNumber
 getValueBN (l:ls) [] = l
 getValueBN (l:ls) n = getValueBN ls (subBN n [1])  
 
+--usamos ? 
 listBN :: BigNumber -> [BigNumber]
 listBN [] = [[]]
 listBN n = listBN (subBN n [1]) ++ [n]

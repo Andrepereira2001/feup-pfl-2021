@@ -17,7 +17,6 @@ fibLista x | x < 0 = error "Negative number not valid"
            | otherwise = fibListaHelp x 1 0 1
 
 
-
 fibListaInfinita :: (Integral a) => a -> a
 fibListaInfinita n | n < 0 = error "Negative number not valid" 
                    | otherwise = fibs !! fromIntegral(n)
