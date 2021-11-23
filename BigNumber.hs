@@ -105,10 +105,18 @@ mulBN a b | (null a || head a /= 0) && (null b || head b /= 0) = (reverse (mul (
 -- d divisor
 -- v value
 
+-- v = sum d c times 
+-- return how much divisors fit in the dididend and the remainder
 divi :: BigNumber -> BigNumber -> BigNumber -> BigNumber -> (BigNumber, BigNumber)
 divi c dd d v | bigger v dd = (subBN c [1], subBN dd (subBN v d)) 
               | otherwise = divi (somaBN c [1]) dd d (somaBN v d)
 
+-- dd dividend
+-- d divisor
+-- c counter
+-- r result
+
+-- iterates through the didivend and starts to in the result value
 divi2 :: BigNumber -> BigNumber -> BigNumber -> BigNumber -> (BigNumber, BigNumber)
 divi2 [] d c r | not (null r) && null (fst (divi [] c d [])) = (r ++ [0], snd (divi [] c d []))
                | otherwise = (r ++ ((fst (divi [] c d []))) , snd (divi [] c d []))
