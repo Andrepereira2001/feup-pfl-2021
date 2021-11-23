@@ -127,12 +127,21 @@ divi c dd d v | bigger v dd = (subBN c [1], subBN dd (subBN v d))
   --                 | otherwise = divi2 dd d (c ++ [x]) 
 
 
+-- dd dividend
+-- d divisor
+-- c counter
+-- r result
 
+-- iterates through the dividend to find a subnumber bigger then the divisor
+-- find subnumber -> calculates division and append the result to the current result variabel the remainer stays in the counter
 divi2 :: BigNumber -> BigNumber -> BigNumber -> BigNumber -> (BigNumber, BigNumber)
 divi2 [] d c r = (r ++ ((fst (divi [] c d []))) , snd (divi [] c d []))
 divi2 (x:dd) d c r | biggerEqual (c ++ [x]) d = divi2 dd d (snd (divi [] (c ++ [x]) d [])) (r ++ (fst (divi [] (c ++ [x]) d [])))
+                    -- ignore starting adding numbers
                    | null r = divi2 dd d (c ++ [x]) r 
+                   -- if counter is [] <zero> mantain as [] <zero>
                    | x == 0 && null c = divi2 dd d [] (r ++ [0])
+                   -- add 0 to result for each extra added number to counter
                    | otherwise = divi2 dd d (c ++ [x]) (r ++ [0])
 
 
