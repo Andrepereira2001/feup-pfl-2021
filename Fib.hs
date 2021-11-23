@@ -6,12 +6,16 @@ fibRec 1 = 1
 fibRec n | n < 0 = error "Negative number not valid" 
          | otherwise = fibRec(n-1) + fibRec(n-2)
 
+fibListaHelp :: (Integral a) => a -> a -> a -> a -> a
+fibListaHelp 0 _ _ _ = 0
+fibListaHelp 1 _ _ _ = 1
+fibListaHelp n i a b | n == i = b
+                     | otherwise = fibListaHelp n (i+1) b (a+b)
+
 fibLista :: (Integral a) => a -> a
 fibLista x | x < 0 = error "Negative number not valid" 
-           | otherwise = last [calc n | n <- [0..x]]
-             where calc 0 = 0
-                   calc 1 = 1
-                   calc n = calc (n-1) + calc (n-2)
+           | otherwise = fibListaHelp x 1 0 1
+
 
 
 fibListaInfinita :: (Integral a) => a -> a
@@ -25,12 +29,15 @@ fibRecBN [1] = [1]
 fibRecBN b | head b == 0 = error "Negative number not valid" 
            | otherwise = somaBN (fibRecBN (subBN b [1])) (fibRecBN (subBN b [2]))
 
-fibListaBN :: BigNumber -> BigNumber 
+fibListaHelpBN :: BigNumber -> BigNumber -> BigNumber -> BigNumber -> BigNumber
+fibListaHelpBN [] _ _ _ = []
+fibListaHelpBN [1] _ _ _ = [1]
+fibListaHelpBN n i a b | equalBN n i = b
+                     | otherwise = fibListaHelpBN n (somaBN i [1]) b (somaBN a b)
+
+fibListaBN :: BigNumber -> BigNumber
 fibListaBN b | (not (null b)) && (head b == 0) = error "Negative number not valid" 
-             | otherwise = last [calc n | n <- (listBN b)]
-               where calc [] = []
-                     calc [1] = [1]
-                     calc n = somaBN (calc (subBN n [1])) (calc (subBN n [2]))
+             | otherwise = fibListaHelpBN b [1] [] [1]
 
 
 fibListaInfinitaBN :: BigNumber -> BigNumber

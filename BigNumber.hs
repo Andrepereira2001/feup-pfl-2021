@@ -1,5 +1,5 @@
 module BigNumber
-(BigNumber, somaBN, subBN, mulBN, divBN, getValueBN, listBN) where
+(BigNumber, somaBN, subBN, mulBN, divBN, getValueBN, listBN, equalBN) where
 
 import Data.Char(digitToInt, intToDigit)
 
@@ -34,6 +34,11 @@ biggerEqual (a:as) (b:bs) | length as > length bs = True
                       | a > b = True
                       | b > a = False
                       | otherwise = biggerEqual as bs 
+
+equalBN :: BigNumber -> BigNumber -> Bool
+equalBN [] [] = True
+equalBN (a:as) (b:bs) | a == b && length as == length bs = equalBN as bs
+                      | otherwise = False
 
 getValueBN :: [BigNumber] -> BigNumber -> BigNumber
 getValueBN (l:ls) [] = l
@@ -94,18 +99,38 @@ mulBN a b | (null a || head a /= 0) && (null b || head b /= 0) = (reverse (mul (
           | (not (null a) && head a == 0) && (null b || head b /= 0) = (0:reverse (mul (reverse (tail a)) (reverse b))) 
           | head a == 0 && head b == 0 = (reverse (mul (reverse (tail a)) (reverse (tail b))))
 
+
+-- c counter
+-- dd dividend
+-- d divisor
+-- v value
+
 divi :: BigNumber -> BigNumber -> BigNumber -> BigNumber -> (BigNumber, BigNumber)
 divi c dd d v | bigger v dd = (subBN c [1], subBN dd (subBN v d)) 
               | otherwise = divi (somaBN c [1]) dd d (somaBN v d)
+
+divi2 :: BigNumber -> BigNumber -> BigNumber -> BigNumber -> (BigNumber, BigNumber)
+divi2 [] d c r | not (null r) && null (fst (divi [] c d [])) = (r ++ [0], snd (divi [] c d []))
+               | otherwise = (r ++ ((fst (divi [] c d []))) , snd (divi [] c d []))
+divi2 (x:[]) d c r | x == 0 && null c = divi2 [] d [] r
+divi2 (x:dd) d c r | biggerEqual c d = divi2 (x:dd) d (snd (divi [] c d [])) (r ++ (fst (divi [] c d [])))
+                   | x == 0 && null c = divi2 dd d [] (r ++ [0])
+                   | otherwise = divi2 dd d (c ++ [x]) r
 
               
 divBN :: BigNumber -> BigNumber -> (BigNumber, BigNumber)
 divBN a b | null b = error "divide by zero" 
           | null a = ([], [])
-          | head a /= 0 && head b /= 0 = divi [] a b []
-          | head a /= 0 && head b == 0 = (0:somaBN (fst (divi [] a (tail b) [])) [1], 0:subBN (tail b) (snd (divi [] a (tail b) [])))
-          | head a == 0 && head b /= 0 = (0:somaBN (fst (divi [] (tail a) b [])) [1], subBN b (snd (divi [] (tail a) b []))) 
-          | head a == 0 && head b == 0 = divi [] a b []
+          | head a /= 0 && head b /= 0 = divi2 a b [] []
+
+          | head a /= 0 && head b == 0 && null (snd (divi2 a (tail b) [] [])) = (0:(fst (divi2 a (tail b) [] [])), [])
+          | head a /= 0 && head b == 0 = (0:somaBN (fst (divi2 a (tail b) [] [])) [1], 0:subBN (tail b) (snd (divi2 a (tail b) [] [])))
+
+          | head a == 0 && head b /= 0 && null (snd (divi2 (tail a) b [] [])) = (0:(fst (divi2 (tail a) b [] [])), []) 
+          | head a == 0 && head b /= 0 = (0:somaBN (fst (divi2 (tail a) b [] [])) [1], subBN b (snd (divi2 (tail a) b [] []))) 
+
+          | head a == 0 && head b == 0 && null (snd (divi2 (tail a) (tail b) [] [])) = ((fst (divi2 (tail a) (tail b) [] [])), [])
+          | head a == 0 && head b == 0 = ((fst (divi2 (tail a) (tail b) [] [])), 0:(snd (divi2 (tail a) (tail b) [] [])))
 
 safeDivBN :: BigNumber -> BigNumber -> Maybe (BigNumber, BigNumber)
 safeDivBN a b | null b = Nothing

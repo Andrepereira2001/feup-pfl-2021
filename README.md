@@ -18,7 +18,7 @@ In string representation the negative numbers must have the '-' char at the begi
 | Function             | fibLista |
 | ---                  | ---    |
 | __Usage Cases__          | We tested for each integer number till x and it does not work for negative numbers.        |
-| __Function Description__ | The function adopts a __dynamic programming__ aprouch because he starts to calculate the finobaci numbers from 0 until the _nth_ number asked, dynamically acessing the previous calculated finobacci numbers to produce the next one.       |
+| __Function Description__ | The function adopts a __dynamic programming__ aprouch because he starts to calculate the finobaci numbers from 0 until the _nth_ number asked, dynamically saving the previous two calculated finobacci numbers to produce the next one. |
 
 | Function             | fibListaInfinita |
 | ---                  | ---    |
@@ -34,7 +34,7 @@ In string representation the negative numbers must have the '-' char at the begi
 | Function             | fibListaBN |
 | ---                  | ---    |
 | __Usage Cases__          | We tested for each BigNumber number till x and it does not work for negative numbers.        |
-| __Function Description__ | Same as the integral version. The function adopts a __dynamic programming__ aprouch because he starts to calculate the finobaci numbers from 0 until the _nth_ number asked, dynamically acessing the previous calculated finobacci numbers to produce the next one.       |
+| __Function Description__ | Same as the integral version. The function adopts a __dynamic programming__ aprouch because he starts to calculate the finobaci numbers from 0 until the _nth_ number asked, dynamically saving the previous  two calculated finobacci numbers to produce the next one.       |
 
 | Function             | fibListaInfinitaBN |
 | ---                  | ---    |
