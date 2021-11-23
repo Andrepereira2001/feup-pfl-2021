@@ -1,5 +1,5 @@
 module BigNumber
-(BigNumber, somaBN, subBN, mulBN, divBN, getValueBN, listBN, equalBN) where
+(BigNumber, somaBN, subBN, mulBN, divBN, getValueBN, equalBN) where
 
 import Data.Char(digitToInt, intToDigit)
 
@@ -48,11 +48,6 @@ equalBN (a:as) (b:bs) | a == b && length as == length bs = equalBN as bs
 getValueBN :: [BigNumber] -> BigNumber -> BigNumber
 getValueBN (l:ls) [] = l
 getValueBN (l:ls) n = getValueBN ls (subBN n [1])  
-
---usamos ? 
-listBN :: BigNumber -> [BigNumber]
-listBN [] = [[]]
-listBN n = listBN (subBN n [1]) ++ [n]
 
 soma :: [Int] -> [Int] -> [Int]
 soma [] [] = []
@@ -123,13 +118,23 @@ divi c dd d v | bigger v dd = (subBN c [1], subBN dd (subBN v d))
 -- r result
 
 -- iterates through the didivend and starts to in the result value
+--divi2 :: BigNumber -> BigNumber -> BigNumber -> BigNumber -> (BigNumber, BigNumber)
+--divi2 [] d c r | not (null r) && null (fst (divi [] c d [])) = (r ++ [0], snd (divi [] c d []))
+ --              | otherwise = (r ++ ((fst (divi [] c d []))) , snd (divi [] c d []))
+--divi2 (x:[]) d c r | x == 0 && null c = divi2 [] d [] r
+--divi2 (x:dd) d c r | biggerEqual c d = divi2 (x:dd) d (snd (divi [] c d [])) (r ++ (fst (divi [] c d [])))
+ --                  | x == 0 && null c = divi2 dd d [] (r ++ [0])
+  --                 | otherwise = divi2 dd d (c ++ [x]) 
+
+
+
 divi2 :: BigNumber -> BigNumber -> BigNumber -> BigNumber -> (BigNumber, BigNumber)
-divi2 [] d c r | not (null r) && null (fst (divi [] c d [])) = (r ++ [0], snd (divi [] c d []))
-               | otherwise = (r ++ ((fst (divi [] c d []))) , snd (divi [] c d []))
-divi2 (x:[]) d c r | x == 0 && null c = divi2 [] d [] r
-divi2 (x:dd) d c r | biggerEqual c d = divi2 (x:dd) d (snd (divi [] c d [])) (r ++ (fst (divi [] c d [])))
+divi2 [] d c r = (r ++ ((fst (divi [] c d []))) , snd (divi [] c d []))
+divi2 (x:dd) d c r | biggerEqual (c ++ [x]) d = divi2 dd d (snd (divi [] (c ++ [x]) d [])) (r ++ (fst (divi [] (c ++ [x]) d [])))
+                   | null r = divi2 dd d (c ++ [x]) r 
                    | x == 0 && null c = divi2 dd d [] (r ++ [0])
-                   | otherwise = divi2 dd d (c ++ [x]) r
+                   | otherwise = divi2 dd d (c ++ [x]) (r ++ [0])
+
 
               
 divBN :: BigNumber -> BigNumber -> (BigNumber, BigNumber)
