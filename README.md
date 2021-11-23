@@ -54,7 +54,6 @@ In string representation the negative numbers must have the '-' char at the begi
 | __Function Description__ | This function was made to facilitate the conversion from BigNumber to String. |
 | __Implementation__ | This function just goes through every element of the BigNumber (list of Int) and converts them into Char putting them in a list that represents the final number in a String. The conversion from Int to Char is done with the function intToDigit from the Data.Char module. |
 
-
 | Function             | somaBN |
 | ---                  | ---    |
 | __Usage Cases__          | We tested this function with all kinds of combinations like, positive + positive somaBN [1,0] [2,0] => [3,0], positive + negative somaBN [1,0] [0,2,0] => [0,1,0], sum of numbers that result in more decimal houses somaBN [8,8] [1,3] => [1,0,1], sum of numbers that result in the reduction of decimal houses somaBN [1,5] [0,1,3] => [2], sum with 0 somaBN [1,5] [] => [1,5] and sum resulting in 0 somaBN [0,1,3] [1,3] => []|
@@ -73,12 +72,11 @@ In string representation the negative numbers must have the '-' char at the begi
 | __Function Description__ | This function takes two BigNumbers returning their multiplication |
 | __Implementation__ | To implement this function we first start by inverting the two given BigNumbers. In order to make the multiplication operation we take an recursive aprouch since we sum, the result of the multiplication of all the digits of the first BigNumber with the first digit of the second BigNumber, with the value returned from the recursive call of the `mulBN` with the first BigNumber and the tail of the second BigNumber. To deal with the negative numbers we verify if the numbers have both the same signal, depending on the case the multiplication operation is made with possitive numbers and, at the end, a negative signal is added at the beggining of the BigNumber |
 
-
 | Function             | divBN |
 | ---                  | ---    |
 | __Usage Cases__          | We tested this function with all the possibel combinations. Positive divided by positive divBN [1,2,3] [2,3] => ([5],[8]), positive divided by negative divBN [5,3,3] [0,5,3] => ([0,1,1],[0,5,0]), negative divided by positive divBN [0,7,3] [7] => ([0,1,1],[4]), negative divided by negative divBN [0,2,4,3] [0,8] => ([3,0],[0,3]). We also tested values where the remainder is zero divBN [2,5,6] [8] => ([3,2],[]), when the dividend is smaller then the divisor divBN [2,3] [5,3] => ([],[2,3]), when the dividend is zero divBN [] [4] => ([],[]) and lastely we tested the case when the divisor is zero divBN [5] [] => "Exception: divide by zero" |
 | __Function Description__ | This function takes two BigNumbers returning a tuple with (divisão inteira) and the remainder. The division with negative numbers is made just like the `mod` and `div` operators from haskell|
-| __Implementation__ | In order to implement this function we sum the divisor _n_ times until the sum is bigger then the dividend, the desired result is _n-1_ for the quocient and the sum minus the divisor for the remainder. In this function to deal with negative numbers and keep the same output as the haskell functions we had the need to make some sums and substrations to the final output of the division |
+| __Implementation__ | In order to implement this function we retrive, from the beginning of the dividend, a number and append it to the final of the current auxiliar BigNumber. If the auxiliar BigNumber is bigger then the divisor we calculate the times that the disisor must by multiplied to reach the auxiliar BigNumber. The result is appendeded to the resulting BigNumber and the remainer is mantained in the auxiliar BigNumber. We repeat the process until we reach the end of the dividend. If we add an 0 to the auxiliar bigNumber and its current value is [] we must add a 0 to the result. In this function to deal with negative numbers and keep the same output as the haskell functions we had the need to make extra operations to the final output of the division. |
 
 | Function             | safeDivBN |
 | ---                  | ---    |
