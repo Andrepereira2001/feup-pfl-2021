@@ -49,20 +49,36 @@ getValueBN :: [BigNumber] -> BigNumber -> BigNumber
 getValueBN (l:ls) [] = l
 getValueBN (l:ls) n = getValueBN ls (subBN n [1])  
 
+-- no need to look it works!!!!!
 soma :: BigNumber -> BigNumber -> BigNumber
 soma [] [] = []
+
+-- ensure that 2 digit numbers are removed([1,10,3])
+-- append div to the end of the BigNumber
 soma [] (b:[]) | div b 10 == 0 = [mod b 10]
-               | otherwise = mod b 10: [div b 10]
+               | otherwise = mod b 10: [div b 10] 
+-- increment div to the next BigNumber element
 soma [] (b:bs) = mod b 10: soma [] ((head bs) + (div b 10) : tail bs)
+
+-- append div to the end of the BigNumber
 soma (a:[]) [] | div a 10 == 0 = [mod a 10]
                | otherwise = mod a 10: [div a 10]
+-- increment div to the next BigNumber element
 soma (a:as) [] = mod a 10: soma [] ((head as) + (div a 10) : tail as)
+
+-- both numbers have the same size append the div result in one of them 
 soma (a:[]) (b:[]) | a+b >= 10 = mod (a+b) 10: soma [(div (a+b) 10)] []
-                   | otherwise = a+b  : soma [] []   
+                   | otherwise = a+b  : soma [] []
+
+-- if no more numbers to increment in a, increment in b
 soma (a:[]) (b:bs) | a+b >= 10 = mod (a+b) 10: soma [] ((head bs) + (div (a+b) 10) : tail bs)
-                   | otherwise = a+b  : soma [] bs                                  
+                   | otherwise = a+b  : soma [] bs 
+
+-- default increment div value to a                                 
 soma (a:as) (b:bs) | a+b >= 10 = mod (a+b) 10: soma ((head as) + (div (a+b) 10) : tail as) bs
                    | otherwise = a+b  : soma as bs 
+
+
 
 somaBN :: BigNumber -> BigNumber -> BigNumber
            -- positive added to positive
@@ -76,6 +92,7 @@ somaBN a b | (null a || head a /= 0) && (null b || head b /= 0) = reverse( soma 
            
            -- negative added to negative
            | head a == 0 && head b == 0 = (0:reverse( soma (reverse (tail a)) (reverse (tail b)) ))
+
 
 sub :: BigNumber -> BigNumber -> BigNumber
 sub [] [] = []
