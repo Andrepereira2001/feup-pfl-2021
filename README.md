@@ -93,20 +93,20 @@ We noticed that Int type has a maximum representation even if Integer does not.
 For the representation with 64-bits like ghci the maximum Int representation is: 2^63-1 (that corresponds to - 9223372036854775807). 
 
 Hence, the maximum result of fibLista that we can have being an Int is for the argument: 92. 
-fibLista 92 => 12200160415121876738
+fibLista 92 => 7540113804746346429
 
 For the 93 argument if we don´t specify we want it to be an Int it is automatically converting and giving the result in Integer. 
 fibLista 93 :: Int =>  -6246583658587674878 (overflow)
 fibLista 93 => 12200160415121876738  (integer)(correct)
 
 Int Representation: 
-- 12200160415121876738 - fib 92
+- 12200160415121876738 - fib 93
 - 9223372036854775807 - max int 
-- 7540113804746346429 - fib 93
+- 7540113804746346429 - fib 92
 
-On the other side, Integer representation does not have prevention from overflow, this ables us to represent every number until de memory does not allow any more.
+On the other side, Integer representation have prevention from overflow, this ables us to represent every number until de memory does not allow any more.
 
 For the BigNumber functions as the numbers are represented in a list of Int, the representation is also infinit. Each element of the list, an Int, never is more than 9 so it does not have any limitation. 
 As for the size of the list, it may be infinit as haskell allows this representation, but can not go after the memory size. 
 
-Even if the two last representations: Integer and BigNumbers can represent every number. This function calls can be tiring and long lasting, even using dynamic programming stratagies. The BigNumber is even more than the Integer one because of the extra calculations it needs to represent the final result. 
+Even if the two last representations: Integer and BigNumbers can represent every number. This function calls can be tiring and long lasting, even using dynamic programming stratagies. The BigNumber is even more than the Integer one because of the extra operations it needs to do. 
