@@ -6,6 +6,7 @@ fibRec 1 = 1
 fibRec n | n < 0 = error "Negative number not valid" 
          | otherwise = fibRec(n-1) + fibRec(n-2)
 
+--
 fibListaHelp :: (Integral a) => a -> a -> a -> a -> a
 fibListaHelp 0 _ _ _ = 0
 fibListaHelp 1 _ _ _ = 1

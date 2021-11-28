@@ -1,14 +1,19 @@
 module BigNumber
-(BigNumber, somaBN, subBN, mulBN, divBN, getValueBN, equalBN) where
+(BigNumber, somaBN, subBN, mulBN, divBN, getValueBN, equalBN, scanner, output) where
 
 import Data.Char(digitToInt, intToDigit)
 
 type BigNumber = [Int]
 
+scannerHelp :: String -> BigNumber
+scannerHelp "" = []
+scannerHelp (x:xs) | x>='0' && x<='9' = digitToInt(x):(scannerHelp xs)
+               | otherwise = error "Not a number"
+
 scanner :: String -> BigNumber
-scanner "0" = []
-scanner ('-':l) = 0:(scanner l)
-scanner l = [digitToInt(x) | x <- l]
+scanner ('-':'0':l) = error "Invalid input"
+scanner ('-':l) = 0:(dropWhile (==0) (scannerHelp l))
+scanner l = dropWhile (==0) (scannerHelp l)
 
 output :: BigNumber -> String
 output [] = "0"
@@ -149,7 +154,7 @@ mulBN a b | (null a || head a /= 0) && (null b || head b /= 0) = (reverse (mul (
 -- v value
 
 -- v = sum d c times 
--- return how much divisors fit in the dididend and the remainder
+-- return how much divisors fit in the dividend and the remainder
 divi :: BigNumber -> BigNumber -> BigNumber -> BigNumber -> (BigNumber, BigNumber)
 divi c dd d v | bigger v dd = (subBN c [1], subBN dd (subBN v d)) 
               | otherwise = divi (somaBN c [1]) dd d (somaBN v d)
