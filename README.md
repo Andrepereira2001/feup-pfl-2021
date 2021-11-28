@@ -1,6 +1,11 @@
 # feup-pfl-2021
 Programação Funcional e Lógica
 
+__G6_04__
+
+* André Pereira - up201905650
+* Matilde Oliveira - up201906954
+
 ## IMPORTANT
 In BigNumber representation, if the digit 0 appears at the beginning of the array, the BigNumber is negative. 
 
