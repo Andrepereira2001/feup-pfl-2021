@@ -6,7 +6,10 @@ fibRec 1 = 1
 fibRec n | n < 0 = error "Negative number not valid" 
          | otherwise = fibRec(n-1) + fibRec(n-2)
 
---
+-- n desired iteration (iteration that we must stop)
+-- i current iteration
+-- a = fib i-1 -> fibonnaci number of i-1
+-- b = fib i -> fibonnaci number of i
 fibListaHelp :: (Integral a) => a -> a -> a -> a -> a
 fibListaHelp 0 _ _ _ = 0
 fibListaHelp 1 _ _ _ = 1
@@ -29,6 +32,11 @@ fibRecBN [1] = [1]
 fibRecBN b | head b == 0 = error "Negative number not valid" 
            | otherwise = somaBN (fibRecBN (subBN b [1])) (fibRecBN (subBN b [2]))
 
+
+-- n desired iteration (iteration that we must stop)
+-- i current iteration
+-- a = fib i-1 -> fibonnaci number of i-1
+-- b = fib i -> fibonnaci number of i
 fibListaHelpBN :: BigNumber -> BigNumber -> BigNumber -> BigNumber -> BigNumber
 fibListaHelpBN [] _ _ _ = []
 fibListaHelpBN [1] _ _ _ = [1]
