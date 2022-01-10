@@ -1,4 +1,21 @@
 /*
+Function: Reads a number from the input  
+
+display_game(-FinalNumber,+StartNumber)
+Parameters: 
+    1. Number read from the input
+    2. Base number
+*/
+read_number(N,N):- peek_code(10), !,
+                    skip_line.
+read_number(X,N):- get_code(_Y),
+                   char_code('0',C),
+                   V is _Y - C,
+                   N1 is N*10,
+                   N2 is N1 + V,
+                   read_number(X,N2).
+
+/*
 Function: Given a Game State prints the Board, next player and title.  
 
 display_game(+GameState)
@@ -128,7 +145,7 @@ display_player('B'):- write('Next Player: BLACK'), !.
 
 
 /*
-Function: Aks for input on what pieace to move.  
+Function: Ask for input on what pieace to move.  
 
 ask_piece(-X, -Y)
 Parameters: 
@@ -139,15 +156,14 @@ ask_piece(X, Y):-   nl,
                     write('PIECE TO MOVE (a-A): '),
                     get_code(_Y),
                     Y is _Y - 97,
-                    get_code(_T),
+                    get_code(45),
                     get_code(_X),
                     X is _X - 65,
-                    write(X/Y), %to remove-----------------------------------------------------
-                    peek_code(10), !, 
+                    peek_code(10), 
                     skip_line. 
 
 /*
-Function: Aks for input on where to move the pieace.  
+Function: Ask for input on where to move the pieace.  
 
 ask_move(-X, -Y)
 Parameters: 
@@ -158,15 +174,11 @@ ask_move(X, Y):-    nl,
                     write('WHERE TO MOVE THE CHOSEN PIECE (a-A): '),
                     get_code(_Y),
                     Y is _Y - 97,
-                    get_code(_T),
+                    get_code(45),
                     get_code(_X),
                     X is _X - 65,
-                    write(X/Y), %to remove-----------------------------------------------------
-                    peek_code(10), !, 
+                    peek_code(10),
                     skip_line. 
-
-%call:- display_game(['B',['W','W','W','W','W'],['W','E','E','E','W'],['E','E','B','E','E'],['B','E','E','E','B'],['E','B','B','B','B']]).
-
 
 /*
 **              Five Field Kono              **  
@@ -192,4 +204,81 @@ PIECE TO MOVE (a-A):
 
 WHERE TO MOVE (b-B):
 */
+
+/*
+Function: Display the menu screen.  
+
+display_menu(+WhiteP, +BlackP, +Size)
+Parameters: 
+    1. Current white player
+    2. Current black player
+    3. Current board size
+*/
+display_menu(White,Black,Size):- nl,nl,nl,nl,nl,nl,
+                                  write('  ______ _             ______ _      _     _   _  __'),
+                                  nl,
+                                  write(' |  ____(_)           |  ____(_)    | |   | | | |/ /'),
+                                  nl,
+                                  write(' | |__   ___   _____  | |__   _  ___| | __| | | \' / ___  _ __   ___  '),
+                                  nl,
+                                  write(' |  __| | \\ \\ / / _ \\ |  __| | |/ _ \\ |/ _\' | |  < / _ \\| \'_ \\ / _ \\ '),
+                                  nl,
+                                  write(' | |    | |\\ V /  __/ | |    | |  __/ | (_| | | . \\ (_) | | | | (_) | '),
+                                  nl,
+                                  write(' |_|    |_| \\_/ \\___| |_|    |_|\\___|_|\\__,_| |_|\\_\\___/|_| |_|\\___/ '),
+                                  nl,nl,nl,nl,nl,
+                                  write('White Player: '),
+                                  write(White),
+                                  write('          Black Player: '),
+                                  write(Black),
+                                  nl,
+                                  write('Board size: '),
+                                  write(Size),
+                                  nl,nl,
+                                  write('MENU'),
+                                  nl,
+                                  write('1. Start Game'),
+                                  nl,
+                                  write('2. Change White Player'),
+                                  nl,
+                                  write('3. Change Black Player'),
+                                  nl,
+                                  write('4. Change Board Size'),
+                                  nl,
+                                  write('5. Quit').
+
+/*
+Function: Ask the user for an option and validate it.  
+
+input_opt(-Opt)
+Parameters: 
+    1. Option chosen by the user
+*/
+input_opt(Opt):-nl,nl,
+                write('Option: '),
+                get_code(_O),
+                Opt is _O - 48,
+                Opt >= 1,
+                Opt =< 5,
+                peek_code(10),
+                skip_line.
+
+/*
+Function: Ask the user for the board size and validate it.  
+
+input_board_size(-Size)
+Parameters: 
+    1. Chosen board size
+*/
+input_board_size(Size):- nl,nl,
+                        write('Size of board must be an integer between 4 and 15'),
+                        nl,
+                        write('Board Size: '),
+                        read_number(Size,0),
+                        Size >= 4,
+                        Size =< 15.
+input_board_size(Size):-write('Invalid Input'),
+                        input_board_size(Size).
+
+
 

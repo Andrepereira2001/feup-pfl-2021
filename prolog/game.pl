@@ -235,19 +235,32 @@ choose_move([Player | Board], human, [[PieceX,PieceY],[DeltaX,DeltaY]]):- ask_pi
                                                                           ask_move(MoveX, MoveY), 
                                                                           DeltaX is MoveX - PieceX,
                                                                           DeltaY is MoveY - PieceY,
-                                                                          nl,
-                                                                          write(piece-PieceX/PieceY),
-                                                                          nl,
-                                                                          write(delta-DeltaX/DeltaY),
-                                                                          nl,
                                                                           validate_move([Player | Board],[[PieceX,PieceY],[DeltaX,DeltaY]]). 
+/*
+choose_move(GameState, computer-Level, Move):- valid_moves(GameState, Moves),
+                                               choose_move(Level, GameState, Moves, Move).*/
+choose_move(Board,Player,Move):-write('Invalid input'),
+                                nl,
+                                choose_move(Board,Player,Move).
 
 
-play_game:-
-            initial_state(5,GameState),
+/*
+Function: Function to start the game.  
+
+play_game()
+*/
+play_game(/*WhiteP, BlackP,*/ Size):-
+            initial_state(Size,GameState),
             display_game(GameState), !, 
             game_cycle(GameState).
             
+/*
+Function: Game loop function.  
+
+game_cycle(+GameState)
+Parameters:
+    1. Board with actual state of the game and information about next player.
+*/
 game_cycle(GameState):-
             game_over(GameState, Winner), !,
             write('End').
@@ -261,15 +274,48 @@ game_cycle(GameState):-
             game_cycle(NewGameState).
 
 
-
-callMe(NewGame):- initial_state(5,Game),
-               display_game(Game),!,
-               choose_move(Game,human,Move),
-               move(Game,Move,NewGame),
-               display_game(NewGame).           
 /*
-choose_move(GameState, computer-Level, Move):- valid_moves(GameState, Moves),
-                                               choose_move(Level, GameState, Moves, Move).*/
+Function: Loops in the menu.  
+
+menu_loop(+WhiteP, +BlackP, +Size)
+Parameters: 
+    1. Current white player
+    2. Current black player
+    3. Current board size
+*/
+menu_loop(WhiteP,BlackP,Size):- display_menu(WhiteP,BlackP,Size),
+                                input_opt(Opt),
+                                make_opt(WhiteP,BlackP,Size,Opt).
+ 
+/*
+Function: Given an option number from the menu makes the action.  
+
+menu_loop(+WhiteP, +BlackP, +Size, +Option)
+Parameters: 
+    1. Current white player
+    2. Current black player
+    3. Current board size
+    4. Chosen option
+*/
+make_opt(WhiteP,BlackP,Size,1):- play_game(Size), !.
+
+make_opt(WhiteP,BlackP,Size,2):- menu_loop(WhiteP,BlackP,Size).
+
+make_opt(WhiteP,BlackP,Size,3):- menu_loop(WhiteP,BlackP,Size).
+
+make_opt(WhiteP,BlackP,_,4):- input_board_size(Size),
+                              menu_loop(WhiteP,BlackP,Size), !.
+
+make_opt(WhiteP,BlackP,Size,5).
+
+
+/*
+Function: First function to be called
+
+menu_loop()
+*/
+play:- menu_loop(human,human,5).
+        
 
 
 func(M,G):- move(['B',['B','B','B','B','B'],['B','E','E','E','B'],['E','E','E','E','E'],['W','E','E','E','W'],['W','W','W','W','W']],M,G). 
