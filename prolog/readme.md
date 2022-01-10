@@ -39,8 +39,8 @@ Primeiro elemento da lista representa a próxima pessoa a jogar.
 
 * __Move__: [[__x__,__y__], [__deltaX__, __deltaY__]]
 
-    * __x__: 0-4
-    * __y__: 0-4
+    * __x__: 0-x
+    * __y__: 0-x
 
     * __deltaX__: 1 ou -1
     * __deltaY__: 1 ou -1

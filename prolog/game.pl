@@ -1,30 +1,38 @@
+:- consult(display).
+
 /*
 Function: Given a list and a position indicates the list element in that position. 
+
+pos_element(+List, +Pos, -Elem).
 Parameters: 
     1. List
     2. Position (Index)
     3. Element in the correspondent index of the list
 */
-posElement([H | _], 0, H).
-posElement([_ | T], P, E):- P > 0,
+pos_element([H | _], 0, H).
+pos_element([_ | T], P, E):- P > 0,
                             P1 is P - 1,
-                            posElement(T, P1 ,E).
+                            pos_element(T, P1 ,E).
 
 /*
 Function: Replaces a the element in the certain list position with a new one. 
+
+replace_element(+Elem, +List, +Pos, -NewList).
 Parameters: 
     1. Element to insert in the index position of the list
     2. List
     3. Position (Index)
     4. List with the Element updated
 */
-replaceElement(E, [_ | T], 0 , [E | T]).
-replaceElement(E, [H | T], P , [H | NL]):- P > 0,
+replace_element(E, [_ | T], 0 , [E | T]).
+replace_element(E, [H | T], P , [H | NL]):- P > 0,
                                            P1 is P - 1,
-                                           replaceElement(E, T, P1, NL).  
+                                           replace_element(E, T, P1, NL).  
 
 /*
 Function: Verifies equality of elem with elements of array
+
+equalElement(+Elem, +List).
 Parameters: 
     1. Element to be equal
     2. List of elements to compare
@@ -34,98 +42,218 @@ equalElement(E, [E | T]) :- equalElement(E,T).
 
 /*
 Function: Validates if the next player to play corresponds to the one making the move. 
+
+validate_player(+GameState, +Pos).
 Parameters: 
     1. Board with nextplayer to play and pieces display
     2. List with the Piece's actual position
 */
-validatePlayer([Player | Board],[ PieceX , PieceY | _ ]):- posElement(Board, PieceX, Row), 
-                                                         posElement(Row, PieceY, Piece),
+validate_player([Player | Board],[ PieceX , PieceY | _ ]):- pos_element(Board, PieceX, Row), 
+                                                         pos_element(Row, PieceY, Piece),
                                                          Player == Piece.
 
 /*
 Function: Validates if the move make the pieces go to a valid position in the board, valid meaning empty and in the diagonal of the actual position. 
+
+validate_shift(+Board, +Pos).
 Parameters: 
     1. Board with actual pieces display
     2. List with the suposed next Piece position
 */
-validateShift(Board, [NextX, NextY | _ ]):- posElement(Board, NextX, Row), 
-                                            posElement(Row, NextY, Piece),
+validate_shift(Board, [NextX, NextY | _ ]):- pos_element(Board, NextX, Row), 
+                                            pos_element(Row, NextY, Piece),
                                             Piece == 'E'.
 /*
-Function: Validates if the move is valid, recurring to validatePlayer and validateShift. 
+Function: Validates if the move is valid, recurring to validate_player and validate_shift. 
+
+validate_move(+GameState, +Move).
 Parameters: 
     1. Board with nextplayer to play and pieces display
     2. List with actual Piece position and shift move
 */
-validateMove([Player | Board], [ [PieceX , PieceY | _ ] , [DeltaX, DeltaY | _ ] | _ ]):- DeltaX == -1; DeltaX == 1,
-                                                                                         DeltaY == -1; DeltaY == 1,
-                                                                                        validatePlayer([Player | Board], [PieceX , PieceY]), 
+validate_move([Player | Board], [ [PieceX , PieceY | _ ] , [DeltaX, DeltaY | _ ] | _ ]):- (DeltaX == -1; DeltaX == 1),
+                                                                                         (DeltaY == -1; DeltaY == 1),
+                                                                                        validate_player([Player | Board], [PieceX , PieceY]), 
                                                                                         NextX is PieceX + DeltaX,
                                                                                         NextY is PieceY + DeltaY,
-                                                                                        validateShift(Board, [NextX , NextY]). 
+                                                                                        validate_shift(Board, [NextX , NextY]). 
 
 /*
 Function: Modifies the board in order to make the given move. 
+
+make_move(+GameState, +Move, -NewGameState).
 Parameters:
     1. Board with player and pieces display
     2. List with actual Piece position and shift move
     3. Board after move
 */
-makeMove([Player | Board], [ [PieceX , PieceY | _ ] , [DeltaX, DeltaY | _ ] | _ ], NewBoard) :- NextX is PieceX + DeltaX,
+make_move([Player | Board], [ [PieceX , PieceY | _ ] , [DeltaX, DeltaY | _ ] | _ ], NewBoard) :- NextX is PieceX + DeltaX,
                                                                                                 NextY is PieceY + DeltaY,
                                                                                                 %set chosen house to player turn piece
-                                                                                                posElement(Board, NextX, Row), 
-                                                                                                replaceElement(Player, Row, NextY, NewRow),
-                                                                                                replaceElement(NewRow, Board, NextX, NewBoard1),
+                                                                                                pos_element(Board, NextY, Row), 
+                                                                                                replace_element(Player, Row, NextX, NewRow),
+                                                                                                replace_element(NewRow, Board, NextY, NewBoard1),
                                                                                                 %set origin house to empty
-                                                                                                posElement(NewBoard1, PieceX, Row2), 
-                                                                                                replaceElement('E', Row2, PieceY, NewRow2),
-                                                                                                replaceElement(NewRow2, NewBoard1, PieceX,NewBoard). 
+                                                                                                pos_element(NewBoard1, PieceY, Row2), 
+                                                                                                replace_element('E', Row2, PieceX, NewRow2),
+                                                                                                replace_element(NewRow2, NewBoard1, PieceY,NewBoard). 
 
 /*
 Function: Modifies the game state in order to complete a player move.
+
+move(+GameState, +Move, -NewGameState)
 Parameters:
     1. Board with player and pieces display
     2. List with actual Piece position and shift move
     3. Game state after move
 */
-move(['W'| Board], Move, ['B'|NB ]):- validateMove(['W' | Board], Move),
-                                      makeMove(['W' | Board], Move, NB). 
+move(['W'| Board], Move, ['B'|NB ]):- validate_move(['W' | Board], Move),
+                                      make_move(['W' | Board], Move, NB). 
 
-move(['B'| Board], Move, ['W'|NB]):- validateMove(['B' | Board], Move),
-                                     makeMove(['B' | Board], Move, NB).
+move(['B'| Board], Move, ['W'|NB]):- validate_move(['B' | Board], Move),
+                                     make_move(['B' | Board], Move, NB).
 
 func(M,G):- move(['B',['B','B','B','B','B'],['B','E','E','E','B'],['E','E','E','E','E'],['W','E','E','E','W'],['W','W','W','W','W']],M,G). 
 
+func2(M,G):- move(['W',['B','B','B','B','B'],['B','E','E','E','B'],['E','E','E','E','E'],['W','E','E','E','W'],['W','W','W','W','W']],M,G). 
+
+
 /*
 Function: If the player that has just moved has all of its pieces in the enemy initial pieces's position
+
+game_over(+GameState, -Winner)
 Parameters:
     1. Board with next player (that does not have the chance to play) and final pieces display
     2. Winner being the player that has just played.
 */
 game_over(['W' | Board], 'B'):- length(Board,BoardN),
                                 LastRowN is BoardN - 1,
-                                posElement(Board, LastRowN, LastRow), 
+                                pos_element(Board, LastRowN, LastRow), 
                                 equalElement('B', LastRow),
                                 PenultimateRowN is BoardN - 2,
-                                posElement(Board, PenultimateRowN, PenultimateRow),
-                                posElement(PenultimateRow, 0, FirstElement), 
+                                pos_element(Board, PenultimateRowN, PenultimateRow),
+                                pos_element(PenultimateRow, 0, FirstElement), 
                                 FirstElement == 'B',
                                 length(PenultimateRow,N),
                                 LastPos is N-1,
-                                posElement(PenultimateRow, LastPos, LastElement), 
+                                pos_element(PenultimateRow, LastPos, LastElement), 
                                 LastElement == 'B'. 
 
 
-game_over(['B' | Board], 'W'):- posElement(Board, 0, FirstRow), 
+game_over(['B' | Board], 'W'):- pos_element(Board, 0, FirstRow), 
                                 equalElement('W', FirstRow), 
-                                posElement(Board, 1, SecondRow),
-                                posElement(SecondRow, 0, FirstElement), 
+                                pos_element(Board, 1, SecondRow),
+                                pos_element(SecondRow, 0, FirstElement), 
                                 FirstElement == 'W',
                                 length(SecondRow,N),
                                 LastPos is N-1,
-                                posElement(SecondRow, LastPos, LastElement), 
+                                pos_element(SecondRow, LastPos, LastElement), 
                                 LastElement == 'W'. 
+
+/*
+Function: Builds and initiates a Board with the dimensions given. 
+
+initial_state(+Size, -GameState)
+Parameters:
+    1. Number of columns or lines for the board to have
+    2. Board with next player (that does not have the chance to play) and final pieces display
+*/
+initial_state(Size, Game):- length(List, Size), 
+                            initial_line(List, Size),
+                            fill_board(List, 0, Size, Board), 
+                            append(['W'], Board, Game).
+
+/*
+Function: Initiates a Line with the size given. 
+
+initial_line(+Size, -GameState)
+Parameters:
+    1. List with length of the Size
+    2. Size of the row of the board
+*/                            
+initial_line([], _):- !. 
+initial_line([Line | List ], Size):- length(Line,Size), 
+                                     initial_line(List, Size). 
+
+/*
+Function: Fills the board with its initial state. 
+
+fill_board(+Board, +Index, +Size , -NewBoard)
+Parameters:
+    1. Empty Board
+    2. Current Index of the line to be filled
+    3. Number of rows of the board
+    4. Board to be completed
+*/
+fill_board([Line | _ ], N , Size , [NewLine | []]):-  N =:= Size - 1,
+                                                        fill_line(Line, Size, N , NewLine).
+fill_board([Line | Board], N , Size , [NewLine | NewBoard]):- fill_line(Line, Size, N , NewLine), 
+                                                              N1 is N+1, 
+                                                              fill_board(Board, N1, Size , NewBoard).
+/*
+Function: Fills the line according with the line to be filled.  
+
+fill_line(+Line, +Size, +Index , -NewLine)
+Parameters:
+    1. Empty Board
+    2. Number of columns of the line 
+    3. Current Index of the element to be filled
+    4. Board to be completed
+*/
+fill_line([], _, _, []).
+
+/*First line*/
+fill_line([_ | Line], Size, 0, ['B' | LineNumber] ):- fill_line(Line, Size, 0, LineNumber).
+
+/*Second line - First Element*/
+fill_line([_ | Line], Size, 1, ['B' | LineNumber] ):-  length(Line, L), L =:= Size-1,
+                                                        fill_line(Line, Size, 1, LineNumber).
+/*Second line - Last Element*/
+fill_line([_ | Line], Size, 1, ['B' | LineNumber] ):-  length(Line, L), L =:= 0,
+                                                        fill_line(Line, Size, 1, LineNumber).
+/*Penultimate line - First Element*/
+fill_line([_ | Line], Size, N, ['W' | LineNumber] ):-   N =:= Size - 2,
+                                                        length(Line, L), L =:= Size-1,
+                                                        fill_line(Line, Size, N, LineNumber).
+/*Penultimate line - Last Element*/
+fill_line([_ | Line], Size, N, ['W' | LineNumber] ):-   N =:= Size - 2,
+                                                        length(Line, L), L =:= 0,
+                                                        fill_line(Line, Size, N, LineNumber).
+/*Last line*/                                    
+fill_line([_ | Line], Size, N, ['W' | LineNumber] ):-   N =:= Size - 1,
+                                                        fill_line(Line, Size, N, LineNumber).
+/*Nth line*/
+fill_line([_ | Line], Size, N, ['E' | LineNumber] ):-fill_line(Line, Size, N, LineNumber).
+
+/*
+Function: Fills the line according with the line to be filled.  
+
+choose_move(+GameState, +Player, -Move)
+Parameters:
+    1. Board with actual state of the game and information about next player.
+    2. Type of Player to play (human or pc)
+    3. Move to receive
+*/
+choose_move([Player | Board], human, [[PieceX,PieceY],[DeltaX,DeltaY]]):- ask_piece(PieceX, PieceY), 
+                                                                          validate_player([Player | Board], [PieceX, PieceY]),
+                                                                          ask_move(MoveX, MoveY), 
+                                                                          DeltaX is MoveX - PieceX,
+                                                                          DeltaY is MoveY - PieceY,
+                                                                          nl,
+                                                                          write(piece-PieceX/PieceY),
+                                                                          nl,
+                                                                          write(delta-DeltaX/DeltaY),
+                                                                          nl,
+                                                                          validate_move([Player | Board],[[PieceX,PieceY],[DeltaX,DeltaY]]). 
+
+callMe(NewGame):- initial_state(5,Game),
+               display_game(Game),!,
+               choose_move(Game,human,Move),
+               move(Game,Move,NewGame),
+               display_game(NewGame).           
+/*
+choose_move(GameState, computer-Level, Move):- valid_moves(GameState, Moves),
+                                               choose_move(Level, GameState, Moves, Move).*/
 
 
 overW(W):- game_over(['B',['W','W','W','W','W'],['W','E','E','E','W'],['E','E','B','E','E'],['B','E','E','E','B'],['E','B','B','B','B']],W). 
