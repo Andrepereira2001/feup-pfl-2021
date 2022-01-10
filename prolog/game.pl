@@ -48,8 +48,8 @@ Parameters:
     1. Board with nextplayer to play and pieces display
     2. List with the Piece's actual position
 */
-validate_player([Player | Board],[ PieceX , PieceY | _ ]):- pos_element(Board, PieceX, Row), 
-                                                         pos_element(Row, PieceY, Piece),
+validate_player([Player | Board],[ PieceX , PieceY | _ ]):- pos_element(Board, PieceY, Row), 
+                                                         pos_element(Row, PieceX, Piece),
                                                          Player == Piece.
 
 /*
@@ -60,8 +60,8 @@ Parameters:
     1. Board with actual pieces display
     2. List with the suposed next Piece position
 */
-validate_shift(Board, [NextX, NextY | _ ]):- pos_element(Board, NextX, Row), 
-                                            pos_element(Row, NextY, Piece),
+validate_shift(Board, [NextX, NextY | _ ]):- pos_element(Board, NextY, Row), 
+                                            pos_element(Row, NextX, Piece),
                                             Piece == 'E'.
 /*
 Function: Validates if the move is valid, recurring to validate_player and validate_shift. 
@@ -112,10 +112,6 @@ move(['W'| Board], Move, ['B'|NB ]):- validate_move(['W' | Board], Move),
 
 move(['B'| Board], Move, ['W'|NB]):- validate_move(['B' | Board], Move),
                                      make_move(['B' | Board], Move, NB).
-
-func(M,G):- move(['B',['B','B','B','B','B'],['B','E','E','E','B'],['E','E','E','E','E'],['W','E','E','E','W'],['W','W','W','W','W']],M,G). 
-
-func2(M,G):- move(['W',['B','B','B','B','B'],['B','E','E','E','B'],['E','E','E','E','E'],['W','E','E','E','W'],['W','W','W','W','W']],M,G). 
 
 
 /*
@@ -246,6 +242,26 @@ choose_move([Player | Board], human, [[PieceX,PieceY],[DeltaX,DeltaY]]):- ask_pi
                                                                           nl,
                                                                           validate_move([Player | Board],[[PieceX,PieceY],[DeltaX,DeltaY]]). 
 
+
+play_game:-
+            initial_state(5,GameState),
+            display_game(GameState), !, 
+            game_cycle(GameState).
+            
+game_cycle(GameState):-
+            game_over(GameState, Winner), !,
+            write('End').
+            
+/*congratulate(Winner).*/
+
+game_cycle(GameState):-
+            choose_move(GameState, human, Move),
+            move(GameState, Move, NewGameState),
+            display_game(NewGameState), !,
+            game_cycle(NewGameState).
+
+
+
 callMe(NewGame):- initial_state(5,Game),
                display_game(Game),!,
                choose_move(Game,human,Move),
@@ -255,6 +271,10 @@ callMe(NewGame):- initial_state(5,Game),
 choose_move(GameState, computer-Level, Move):- valid_moves(GameState, Moves),
                                                choose_move(Level, GameState, Moves, Move).*/
 
+
+func(M,G):- move(['B',['B','B','B','B','B'],['B','E','E','E','B'],['E','E','E','E','E'],['W','E','E','E','W'],['W','W','W','W','W']],M,G). 
+
+func2(M,G):- validate_player(['W',['B','B','B','B','B'],['B','E','E','E','B'],['E','E','E','E','E'],['W','E','E','E','W'],['W','W','W','W','W']],M). 
 
 overW(W):- game_over(['B',['W','W','W','W','W'],['W','E','E','E','W'],['E','E','B','E','E'],['B','E','E','E','B'],['E','B','B','B','B']],W). 
 
