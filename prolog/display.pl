@@ -159,8 +159,10 @@ ask_piece(X, Y):-   nl,
                     get_code(45),
                     get_code(_X),
                     X is _X - 65,
-                    peek_code(10), 
-                    skip_line. 
+                    peek_code(10).
+
+ask_piece(_,_):- skip_line,
+                 fail.
 
 /*
 Function: Ask for input on where to move the pieace.  
@@ -177,8 +179,10 @@ ask_move(X, Y):-    nl,
                     get_code(45),
                     get_code(_X),
                     X is _X - 65,
-                    peek_code(10),
-                    skip_line. 
+                    peek_code(10).
+                    
+ask_move(_,_):- skip_line,
+                fail.
 
 /*
 **              Five Field Kono              **  
@@ -248,7 +252,7 @@ display_menu(White,Black,Size):- nl,nl,nl,nl,nl,nl,
                                   write('5. Quit').
 
 /*
-Function: Ask the user for an option and validate it.  
+Function: Asks the user for an option and validate it (between 1-5).  
 
 input_opt(-Opt)
 Parameters: 
@@ -263,12 +267,17 @@ input_opt(Opt):-nl,nl,
                 peek_code(10),
                 skip_line.
 
+input_opt(_):- skip_line,
+               fail.
+
+                
+
 /*
-Function: Ask the user for the board size and validate it.  
+Function: Asks the user for the board size and validate it.  
 
 input_board_size(-Size)
 Parameters: 
-    1. Chosen board size
+    1. Chosen board number of columns/rows
 */
 input_board_size(Size):- nl,nl,
                         write('Size of board must be an integer between 4 and 15'),
@@ -279,6 +288,60 @@ input_board_size(Size):- nl,nl,
                         Size =< 15.
 input_board_size(Size):-write('Invalid Input'),
                         input_board_size(Size).
+
+/*
+Function: Asks the user for player type and validate it.  
+
+input_player(-Player)
+Parameters: 
+    1. Chosen player type (between human and computer)
+*/
+input_player(Player):- nl,nl,
+                        write('1. Human'), 
+                        nl,
+                        write('2. Computer'),
+                        nl,
+                        write('Change Player to: '),
+                        get_code(_O),
+                        Opt is _O - 48,
+                        Opt >= 1,
+                        Opt =< 2,
+                        peek_code(10),
+                        skip_line,
+                        set_player(Opt,Player).
+                        
+input_player(Player):-skip_line,
+                      write('Invalid Input'),
+                      input_player(Player).
+                      
+
+/*
+Function: Sets the player to the chosen (human or computer) and if it is a computer asks for the difficulty level of the game mode (1 or 2).  
+
+input_player(+Opt,-Player)
+Parameters: 
+    1. Option chosen
+    2. Chosen player type (human or computer and level)
+*/
+set_player(1,human).
+set_player(2,computer-Level):- nl,nl,
+                                write('1. Difficulty Level 1'), 
+                                nl,
+                                write('2. Difficulty Level 2'),
+                                nl,
+                                write('Change Level to: '),
+                                get_code(_O),
+                                Opt is _O - 48,
+                                Opt >= 1,
+                                Opt =< 2,
+                                peek_code(10),
+                                skip_line,
+                                Level is Opt.
+                        
+set_player(2, computer-Level):-skip_line,
+                               write('Invalid Input'),
+                               set_player(2, computer-Level).
+
 
 
 

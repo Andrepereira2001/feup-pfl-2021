@@ -1,4 +1,4 @@
-:- consult(display).
+:- ensure_loaded(display).
 
 /*
 Function: Given a list and a position indicates the list element in that position. 
@@ -9,7 +9,7 @@ Parameters:
     2. Position (Index)
     3. Element in the correspondent index of the list
 */
-pos_element([H | _], 0, H).
+pos_element([H | _], 0, H):- !.
 pos_element([_ | T], P, E):- P > 0,
                             P1 is P - 1,
                             pos_element(T, P1 ,E).
@@ -24,7 +24,7 @@ Parameters:
     3. Position (Index)
     4. List with the Element updated
 */
-replace_element(E, [_ | T], 0 , [E | T]).
+replace_element(E, [_ | T], 0 , [E | T]):- !.
 replace_element(E, [H | T], P , [H | NL]):- P > 0,
                                            P1 is P - 1,
                                            replace_element(E, T, P1, NL).  
@@ -71,12 +71,29 @@ Parameters:
     1. Board with nextplayer to play and pieces display
     2. List with actual Piece position and shift move
 */
+validate_move([Player | Board], [ [PieceX , PieceY | [] ] , [-1, -1 | [] ] | [] ]):- validate_player([Player | Board], [PieceX , PieceY]), 
+                                                                                  NextX is PieceX -1,
+                                                                                  NextY is PieceY -1,
+                                                                                  validate_shift(Board, [NextX , NextY]). 
+validate_move([Player | Board], [ [PieceX , PieceY | [] ] , [1, -1 | [] ] | [] ]):-  validate_player([Player | Board], [PieceX , PieceY]), 
+                                                                                  NextX is PieceX +1,
+                                                                                  NextY is PieceY -1,
+                                                                                  validate_shift(Board, [NextX , NextY]).
+validate_move([Player | Board], [ [PieceX , PieceY | [] ] , [-1, 1 | [] ] | [] ]):-  validate_player([Player | Board], [PieceX , PieceY]), 
+                                                                                  NextX is PieceX -1,
+                                                                                  NextY is PieceY + 1,
+                                                                                  validate_shift(Board, [NextX , NextY]).
+validate_move([Player | Board], [ [PieceX , PieceY | [] ] , [1, 1 | [] ] | [] ]):-   validate_player([Player | Board], [PieceX , PieceY]), 
+                                                                                  NextX is PieceX + 1,
+                                                                                  NextY is PieceY + 1,
+                                                                                  validate_shift(Board, [NextX , NextY]).
+                                                                                  /*
 validate_move([Player | Board], [ [PieceX , PieceY | _ ] , [DeltaX, DeltaY | _ ] | _ ]):- (DeltaX == -1; DeltaX == 1),
                                                                                          (DeltaY == -1; DeltaY == 1),
                                                                                         validate_player([Player | Board], [PieceX , PieceY]), 
                                                                                         NextX is PieceX + DeltaX,
                                                                                         NextY is PieceY + DeltaY,
-                                                                                        validate_shift(Board, [NextX , NextY]). 
+                                                                                        validate_shift(Board, [NextX , NextY]). */
 
 /*
 Function: Modifies the board in order to make the given move. 
@@ -87,7 +104,7 @@ Parameters:
     2. List with actual Piece position and shift move
     3. Board after move
 */
-make_move([Player | Board], [ [PieceX , PieceY | _ ] , [DeltaX, DeltaY | _ ] | _ ], NewBoard) :- NextX is PieceX + DeltaX,
+make_move([Player | Board], [ [PieceX , PieceY | [] ] , [DeltaX, DeltaY | [] ] | [] ], NewBoard) :- NextX is PieceX + DeltaX,
                                                                                                 NextY is PieceY + DeltaY,
                                                                                                 %set chosen house to player turn piece
                                                                                                 pos_element(Board, NextY, Row), 
@@ -236,9 +253,25 @@ choose_move([Player | Board], human, [[PieceX,PieceY],[DeltaX,DeltaY]]):- ask_pi
                                                                           DeltaX is MoveX - PieceX,
                                                                           DeltaY is MoveY - PieceY,
                                                                           validate_move([Player | Board],[[PieceX,PieceY],[DeltaX,DeltaY]]). 
-/*
+
 choose_move(GameState, computer-Level, Move):- valid_moves(GameState, Moves),
-                                               choose_move(Level, GameState, Moves, Move).*/
+                                               choose_move(Level, GameState, Moves, Move).
+                        
+valid_moves(GameState, Moves):-
+                    findall(Move, move(GameState, Move, NewState), Moves).
+
+choose_move(1, _GameState, Moves, Move):-
+                random_select(Move, Moves, _Rest).
+/*
+choose_move(2, GameState, Moves, Move):-
+                            setof(Value-Mv, NewState^( member(Mv, Moves),
+                            move(GameState, Mv, NewState),
+                            evaluate_board(NewState, Value) ), [_V-Move|_]).*/
+
+
+
+
+
 choose_move(Board,Player,Move):-write('Invalid input'),
                                 nl,
                                 choose_move(Board,Player,Move).
@@ -286,6 +319,8 @@ Parameters:
 menu_loop(WhiteP,BlackP,Size):- display_menu(WhiteP,BlackP,Size),
                                 input_opt(Opt),
                                 make_opt(WhiteP,BlackP,Size,Opt).
+
+menu_loop(WhiteP,BlackP,Size):- menu_loop(WhiteP,BlackP,Size), !.
  
 /*
 Function: Given an option number from the menu makes the action.  
@@ -299,14 +334,16 @@ Parameters:
 */
 make_opt(WhiteP,BlackP,Size,1):- play_game(Size), !.
 
-make_opt(WhiteP,BlackP,Size,2):- menu_loop(WhiteP,BlackP,Size).
+make_opt(_,BlackP,Size,2):-  input_player(WhiteP),
+                             menu_loop(WhiteP,BlackP,Size).
 
-make_opt(WhiteP,BlackP,Size,3):- menu_loop(WhiteP,BlackP,Size).
+make_opt(WhiteP,_,Size,3):-  input_player(BlackP),
+                             menu_loop(WhiteP,BlackP,Size).
 
 make_opt(WhiteP,BlackP,_,4):- input_board_size(Size),
                               menu_loop(WhiteP,BlackP,Size), !.
 
-make_opt(WhiteP,BlackP,Size,5).
+make_opt(_,_,_,5).
 
 
 /*
@@ -325,3 +362,5 @@ func2(M,G):- validate_player(['W',['B','B','B','B','B'],['B','E','E','E','B'],['
 overW(W):- game_over(['B',['W','W','W','W','W'],['W','E','E','E','W'],['E','E','B','E','E'],['B','E','E','E','B'],['E','B','B','B','B']],W). 
 
 overB(W):- game_over(['W',['W','W','E','W','W'],['W','E','W','E','W'],['E','E','E','E','E'],['B','E','E','E','B'],['B','B','B','B','B']],W). 
+
+choseMe(Moves):-findall(Move, move(['B',['B','B','B','B','B'],['B','E','E','E','B'],['E','E','E','E','E'],['W','E','E','E','W'],['W','W','W','W','W']], Move, NewState), Moves).
