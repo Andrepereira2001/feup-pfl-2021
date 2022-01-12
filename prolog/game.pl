@@ -1,4 +1,5 @@
 :- ensure_loaded(display).
+:- ensure_loaded(bot).
 
 /*
 Function: Given a list and a position indicates the list element in that position. 
@@ -9,7 +10,7 @@ Parameters:
     2. Position (Index)
     3. Element in the correspondent index of the list
 */
-pos_element([H | _], 0, H):- !.
+pos_element([H | _], 0, H).
 pos_element([_ | T], P, E):- P > 0,
                             P1 is P - 1,
                             pos_element(T, P1 ,E).
@@ -24,7 +25,7 @@ Parameters:
     3. Position (Index)
     4. List with the Element updated
 */
-replace_element(E, [_ | T], 0 , [E | T]):- !.
+replace_element(E, [_ | T], 0 , [E | T]).
 replace_element(E, [H | T], P , [H | NL]):- P > 0,
                                            P1 is P - 1,
                                            replace_element(E, T, P1, NL).  
@@ -257,20 +258,6 @@ choose_move([Player | Board], human, [[PieceX,PieceY],[DeltaX,DeltaY]]):- ask_pi
 choose_move(GameState, computer-Level, Move):- valid_moves(GameState, Moves),
                                                choose_move(Level, GameState, Moves, Move).
                         
-valid_moves(GameState, Moves):-
-                    findall(Move, move(GameState, Move, NewState), Moves).
-
-choose_move(1, _GameState, Moves, Move):-
-                random_select(Move, Moves, _Rest).
-/*
-choose_move(2, GameState, Moves, Move):-
-                            setof(Value-Mv, NewState^( member(Mv, Moves),
-                            move(GameState, Mv, NewState),
-                            evaluate_board(NewState, Value) ), [_V-Move|_]).*/
-
-
-
-
 
 choose_move(Board,Player,Move):-write('Invalid input'),
                                 nl,
@@ -280,31 +267,44 @@ choose_move(Board,Player,Move):-write('Invalid input'),
 /*
 Function: Function to start the game.  
 
-play_game()
+play_game(+WhiteP, +BlackP, +Size)
+Parameters:
+    1. Current black player
+    2. Current board size
+    3. Board size
 */
-play_game(/*WhiteP, BlackP,*/ Size):-
+play_game(WhiteP, BlackP, Size):-
             initial_state(Size,GameState),
             display_game(GameState), !, 
-            game_cycle(GameState).
-            
+            game_cycle(GameState,WhiteP,BlackP).
+
+          
 /*
 Function: Game loop function.  
 
-game_cycle(+GameState)
+game_cycle(+GameState,+WhiteP,+BlackP)
 Parameters:
     1. Board with actual state of the game and information about next player.
+    2. Current black player
+    3. Current board size
 */
-game_cycle(GameState):-
+game_cycle(GameState,_,_):-
             game_over(GameState, Winner), !,
             write('End').
             
 /*congratulate(Winner).*/
 
-game_cycle(GameState):-
-            choose_move(GameState, human, Move),
-            move(GameState, Move, NewGameState),
+game_cycle(['B' | Board],WhiteP,BlackP):-
+            choose_move(['B' | Board], BlackP, Move),
+            move(['B' | Board], Move, NewGameState),
             display_game(NewGameState), !,
-            game_cycle(NewGameState).
+            game_cycle(NewGameState,WhiteP,BlackP).
+            
+game_cycle(['W' | Board],WhiteP,BlackP):-
+            choose_move(['W' | Board], WhiteP, Move),
+            move(['W' | Board], Move, NewGameState),
+            display_game(NewGameState), !,
+            game_cycle(NewGameState,WhiteP,BlackP).
 
 
 /*
@@ -325,14 +325,14 @@ menu_loop(WhiteP,BlackP,Size):- menu_loop(WhiteP,BlackP,Size), !.
 /*
 Function: Given an option number from the menu makes the action.  
 
-menu_loop(+WhiteP, +BlackP, +Size, +Option)
+make_opt(+WhiteP, +BlackP, +Size, +Option)
 Parameters: 
     1. Current white player
     2. Current black player
     3. Current board size
     4. Chosen option
 */
-make_opt(WhiteP,BlackP,Size,1):- play_game(Size), !.
+make_opt(WhiteP,BlackP,Size,1):- play_game(WhiteP,BlackP,Size), !.
 
 make_opt(_,BlackP,Size,2):-  input_player(WhiteP),
                              menu_loop(WhiteP,BlackP,Size).
@@ -349,13 +349,13 @@ make_opt(_,_,_,5).
 /*
 Function: First function to be called
 
-menu_loop()
+play()
 */
 play:- menu_loop(human,human,5).
         
 
 
-func(M,G):- move(['B',['B','B','B','B','B'],['B','E','E','E','B'],['E','E','E','E','E'],['W','E','E','E','W'],['W','W','W','W','W']],M,G). 
+func(X,Y):- validate_move(['B',['B','B','B','B','B'],['B','E','E','E','B'],['E','E','E','E','E'],['W','E','E','E','W'],['W','W','W','W','W']],[[2,0],[X,Y]]). 
 
 func2(M,G):- validate_player(['W',['B','B','B','B','B'],['B','E','E','E','B'],['E','E','E','E','E'],['W','E','E','E','W'],['W','W','W','W','W']],M). 
 

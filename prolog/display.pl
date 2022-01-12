@@ -22,7 +22,8 @@ display_game(+GameState)
 Parameters: 
     1. Board with player and pieces display 
 */
-display_game([Player | Board]) :- write('**         Five Field Kono        **'),
+display_game([Player | Board]) :- nl,nl,nl,nl,
+                                  write('**         Five Field Kono        **'),
                                   nl,
                                   nl,
                                   length(Board,N), 
@@ -159,7 +160,8 @@ ask_piece(X, Y):-   nl,
                     get_code(45),
                     get_code(_X),
                     X is _X - 65,
-                    peek_code(10).
+                    peek_code(10),
+                    skip_line.
 
 ask_piece(_,_):- skip_line,
                  fail.
@@ -179,7 +181,8 @@ ask_move(X, Y):-    nl,
                     get_code(45),
                     get_code(_X),
                     X is _X - 65,
-                    peek_code(10).
+                    peek_code(10),
+                    skip_line.
                     
 ask_move(_,_):- skip_line,
                 fail.
