@@ -23,7 +23,7 @@ Function: Depending on the next player to play pieces, the pc has set of valid m
 valid_moves(+GameState, -Moves)
 Parameters: 
     1. Current board and player to play
-    3. List of Valid Moves depending on the player to play
+    2. List of Valid Moves depending on the player to play
 */
 valid_moves([Player | Board], Moves):- player_pieces(Player, Board, List), 
                                        go_through_moves([Player | Board], List, Moves). 

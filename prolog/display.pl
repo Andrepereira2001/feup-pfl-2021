@@ -342,9 +342,87 @@ set_player(2,computer-Level):- nl,nl,
                                 Level is Opt.
                         
 set_player(2, computer-Level):-skip_line,
-                               write('Invalid Input'),
-                               set_player(2, computer-Level).
+                            write('Invalid Input'),
+                            set_player(2, computer-Level).
+
+congratulate(Winner):- nl,
+                       write('                     _   _   _           __          ___                         _         '),
+                       nl, 
+                       write('     /\\             | | | | | |          \\ \\        / (_)                       (_) '),
+                       nl,
+                       write('    /  \\   _ __   __| | | |_| |__   ___   \\ \\  /\\  / / _ _ __  _ __   ___ _ __   _ ___  (_)'),
+                       nl,
+                       write('   / /\\ \\ | \'_ \\ / _` | | __| \'_ \\ / _ \\   \\ \\/  \\/ / | | \'_ \\| \'_ \\ / _ \\ \'__| | / __|'),
+                       nl,
+                       write('  / ____ \\| | | | (_| | | |_| | | |  __/    \\  /\\  /  | | | | | | | |  __/ |    | \\__ \\ '),
+                       nl,
+                       write(' /_/    \\_\\_| |_|\\__,_|  \\__|_| |_|\\___|     \\/  \\/   |_|_| |_|_| |_|\\___|_|    |_|___/ (_)'),
+                       nl,nl,
+                       fail. 
+
+congratulate('W'):-    nl,
+                       write('         __          ___     _ _         _____  _                         _ '),
+                       nl, 
+                       write('         \\ \\        / / |   (_) |       |  __ \\| |                       | |'),
+                       nl,
+                       write('          \\ \\  /\\  / /| |__  _| |_ ___  | |__) | | __ _ _   _  ___ _ __  | |'),
+                       nl,
+                       write('           \\ \\/  \\/ / | \'_ \\| | __/ _ \\ |  ___/| |/ _` | | | |/ _ \\ \'__| | |'),
+                       nl,
+                       write('            \\  /\\  /  | | | | | ||  __/ | |    | | (_| | |_| |  __/ |    |_|'),
+                       nl,
+                       write('             \\/  \\/   |_| |_|_|\\__\\___| |_|    |_|\\__,_|\\__, |\\___|_|    (_)'),
+                       nl,
+                       write('                                                         __/ |              '),
+                       nl,
+                       write('                                                        |___/              '),
+                       nl.
+                       
+
+congratulate('B'):- nl,
+                    write('             ____  _            _      _____  _                         _'),
+                    nl,
+                    write('            |  _ \\| |          | |    |  __ \\| |                       | |'),
+                    nl,
+                    write('            | |_) | | __ _  ___| | __ | |__) | | __ _ _   _  ___ _ __  | |'),
+                    nl,
+                    write('            |  _ <| |/ _` |/ __| |/ / |  ___/| |/ _` | | | |/ _ \\ \'__| | |'),
+                    nl,
+                    write('            | |_) | | (_| | (__|   <  | |    | | (_| | |_| |  __/ |    |_|'),
+                    nl,
+                    write('            |____/|_|\\__,_|\\___|_|\\_\\ |_|    |_|\\__,_|\\__, |\\___|_|    (_)'),
+                    nl,
+                    write('                                                       __/ |              '),
+                    nl,
+                    write('                                                      |___/     ').
+
+                
 
 
+ask_move_show(Show):-  nl, nl, 
+                       write('Want to see which are your valid moves (y)? '),
+                       get_char(Show),
+                       peek_code(10),
+                       skip_line.
+                    
+ask_move_show('n'):- skip_line.
 
+
+show_moves([]):- nl.
+show_moves([[[X,Y],[DX,DY]] | Moves]):- nl,
+                                        write('Piece on: '), 
+                                        PX is X + 65, 
+                                        PY is Y + 97, 
+                                        put_code(PY),
+                                        write(-),
+                                        put_code(PX),
+                                        %write(PX-PY),
+                                        write(' to '),
+                                        NX is X + DX + 65, 
+                                        NY is Y + DY + 97,  
+                                        put_code(NY),
+                                        write(-),
+                                        put_code(NX),
+                                        %write(NX-NY),
+                                        show_moves(Moves).
 

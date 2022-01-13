@@ -278,7 +278,11 @@ play_game(WhiteP, BlackP, Size):-
             display_game(GameState), !, 
             game_cycle(GameState,WhiteP,BlackP).
 
-          
+
+show_moves('y', GameState):- valid_moves(GameState, Moves),
+                             show_moves(Moves). 
+show_moves(_,_).
+
 /*
 Function: Game loop function.  
 
@@ -290,22 +294,17 @@ Parameters:
 */
 game_cycle(GameState,_,_):-
             game_over(GameState, Winner), !,
-            write('End').
+            congratulate(Winner).
             
 /*congratulate(Winner).*/
 
-game_cycle(['B' | Board],WhiteP,BlackP):-
-            choose_move(['B' | Board], BlackP, Move),
-            move(['B' | Board], Move, NewGameState),
+game_cycle(GameState,WhiteP,BlackP):-
+            ask_move_show(Show),
+            show_moves(Show,GameState),
+            choose_move(GameState, BlackP, Move),
+            move(GameState, Move, NewGameState),
             display_game(NewGameState), !,
             game_cycle(NewGameState,WhiteP,BlackP).
-            
-game_cycle(['W' | Board],WhiteP,BlackP):-
-            choose_move(['W' | Board], WhiteP, Move),
-            move(['W' | Board], Move, NewGameState),
-            display_game(NewGameState), !,
-            game_cycle(NewGameState,WhiteP,BlackP).
-
 
 /*
 Function: Loops in the menu.  
@@ -332,7 +331,8 @@ Parameters:
     3. Current board size
     4. Chosen option
 */
-make_opt(WhiteP,BlackP,Size,1):- play_game(WhiteP,BlackP,Size), !.
+make_opt(WhiteP,BlackP,Size,1):- play_game(WhiteP,BlackP,Size), !,
+                                 menu_loop(WhiteP,BlackP,Size).
 
 make_opt(_,BlackP,Size,2):-  input_player(WhiteP),
                              menu_loop(WhiteP,BlackP,Size).
