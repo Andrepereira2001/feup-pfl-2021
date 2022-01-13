@@ -345,6 +345,13 @@ set_player(2, computer-Level):-skip_line,
                             write('Invalid Input'),
                             set_player(2, computer-Level).
 
+/*
+Function: Writes whose the winner.  
+
+congratulate(+Winner)
+Parameters: 
+    1. 'B' - Black or 'W' - White
+*/
 congratulate(Winner):- nl,
                        write('                     _   _   _           __          ___                         _         '),
                        nl, 
@@ -378,7 +385,6 @@ congratulate('W'):-    nl,
                        write('                                                        |___/              '),
                        nl.
                        
-
 congratulate('B'):- nl,
                     write('             ____  _            _      _____  _                         _'),
                     nl,
@@ -397,17 +403,30 @@ congratulate('B'):- nl,
                     write('                                                      |___/     ').
 
                 
+/*
+Function: Gets input when the player is human if he wants or not to see its valid moves. In case of a computer player it does not show.  
 
-
-ask_move_show(Show):-  nl, nl, 
-                       write('Want to see which are your valid moves (y)? '),
-                       get_char(Show),
-                       peek_code(10),
-                       skip_line.
+ask_move_show(-Show, +Player)
+Parameters: 
+    1. Bollean indicating wether it is suposed to show the valid moves. 
+    2. Player who is currently playing
+*/
+ask_move_show('n',computer-_).                          
+ask_move_show(Show,_):- nl, nl, 
+                        write('Want to see which are your valid moves (y)? '),
+                        get_char(Show),
+                        peek_code(10),
+                        skip_line.
                     
-ask_move_show('n'):- skip_line.
+ask_move_show('n',_):- skip_line.
 
+/*
+Function: Show valid moves.  
 
+show_moves(+Moves)
+Parameters:
+    1. List with all available moves
+*/
 show_moves([]):- nl.
 show_moves([[[X,Y],[DX,DY]] | Moves]):- nl,
                                         write('Piece on: '), 
@@ -416,13 +435,11 @@ show_moves([[[X,Y],[DX,DY]] | Moves]):- nl,
                                         put_code(PY),
                                         write(-),
                                         put_code(PX),
-                                        %write(PX-PY),
                                         write(' to '),
                                         NX is X + DX + 65, 
                                         NY is Y + DY + 97,  
                                         put_code(NY),
                                         write(-),
                                         put_code(NX),
-                                        %write(NX-NY),
                                         show_moves(Moves).
 

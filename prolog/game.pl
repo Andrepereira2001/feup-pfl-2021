@@ -278,9 +278,16 @@ play_game(WhiteP, BlackP, Size):-
             display_game(GameState), !, 
             game_cycle(GameState,WhiteP,BlackP).
 
+/*
+Function: Show valid moves if answer was 'y'.  
 
+show_moves(+Answer, +GameState)
+Parameters:
+    1. Answer of player
+    2. Current game state
+*/
 show_moves('y', GameState):- valid_moves(GameState, Moves),
-                             show_moves(Moves). 
+                             show_moves(Moves).
 show_moves(_,_).
 
 /*
@@ -296,13 +303,19 @@ game_cycle(GameState,_,_):-
             game_over(GameState, Winner), !,
             congratulate(Winner).
             
-/*congratulate(Winner).*/
+game_cycle(['B' | Board],WhiteP,BlackP):-
+            ask_move_show(Show,BlackP),
+            show_moves(Show,['B' | Board]),
+            choose_move(['B' | Board], BlackP, Move),
+            move(['B' | Board], Move, NewGameState),
+            display_game(NewGameState), !,
+            game_cycle(NewGameState,WhiteP,BlackP).
 
-game_cycle(GameState,WhiteP,BlackP):-
-            ask_move_show(Show),
-            show_moves(Show,GameState),
-            choose_move(GameState, BlackP, Move),
-            move(GameState, Move, NewGameState),
+game_cycle(['W' | Board],WhiteP,BlackP):-
+            ask_move_show(Show,WhiteP),
+            show_moves(Show,['W' | Board]),
+            choose_move(['W' | Board], WhiteP, Move),
+            move(['W' | Board], Move, NewGameState),
             display_game(NewGameState), !,
             game_cycle(NewGameState,WhiteP,BlackP).
 
