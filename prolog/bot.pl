@@ -129,7 +129,7 @@ get_empty_final('W', [Line | Board], Empty):-  length(Line, Size),
                                                add_empty_first_last('W',Line, 0, 1, Empty).
                                                
 
-get_empty_final(Player, [Line | Board], Empty):- get_empty_final(Player, Board, Empty). 
+get_empty_final(Player, [_ | Board], Empty):- get_empty_final(Player, Board, Empty). 
 
 
 /*
@@ -146,7 +146,7 @@ Parameters:
 get_empty_place(_,[],_,_,_). 
 get_empty_place(Player, [Player | Line], X,Y, Empty):- X1 is X+1, 
                                                        get_empty_place(Player, Line, X1,Y, Empty). 
-get_empty_place(Player, [Piece | Line], X,Y, [X-Y| Empty]):- X1 is X+1, 
+get_empty_place(Player, [_ | Line], X,Y, [X-Y| Empty]):- X1 is X+1, 
                                                              get_empty_place(Player, Line, X1,Y, Empty). 
 
 /*
@@ -164,14 +164,78 @@ add_empty_first_last(_,[],_,_,_).
 add_empty_first_last(Player,[Piece | Line], 0, Y,  [0-Y |Empty]):- Player \= Piece,
                                                                    add_empty_first_last(Player, Line, 1,Y, Empty).
 
-add_empty_first_last(Player,[Piece | []], X, Y, [X-Y | Empty]):- Player \= Piece.  
+add_empty_first_last(Player,[Piece | []], X, Y, [X-Y | _]):- Player \= Piece.  
 
-add_empty_first_last(Player, [Piece | Line], X,Y, Empty):-  X1 is X+1,
+add_empty_first_last(Player, [_ | Line], X,Y, Empty):-  X1 is X+1,
                                                             add_empty_first_last(Player, Line, X1,Y, Empty).
+
+
+/*
+Function: In a specific board of the players pieces.  
+get_filled_board(+Player, +Board, -Fill)
+
+Parameters:
+    1. Player whose playing
+    2. Actual Board to be inspected
+    3. List of Coordinates where the Player's pieces are
+
+*/
+get_filled_board(_, [],_).
+get_filled_board(Player, [Line | Board], Fill):- length(Line, L),
+                                                 length(Board, B),
+                                                 Y is L-B-1,
+                                                 get_filled_places(Player, Line,0,Y, L, FirstFill), 
+                                                 get_filled_board(Player, Board, LastFill), 
+                                                 append(FirstFill, LastFill, Fill). 
+
+
+
+/*
+Function: In a specific board line get the coordinates of the players pieces.  
+
+get_filled_places(+Player, +BoardLine, +X,+Y, +Size, -List)
+Parameters: 
+    1. Player whose playing
+    2. Actual Board Line to be inspected
+    3. Current board X
+    4. Current board Y
+    5. Size of board
+    6. List of Coordinates where the Player's pieces are
+*/
+get_filled_places(_, [], _, _, _, _).
+%first line, pieces already in final spot (do not add to list)
+get_filled_places('W', _, _, 0,_,_). 
+%second line, pieces already in final spots in the end and the beginning of the line (do not add to list)
+get_filled_places('W', [_ | Line],0,1, Size,Fill):- get_filled_places('W', Line, 1,1,Size, Fill). 
+get_filled_places('W', [_ | []],X,1, Size,Fill):- X1 is X+1, 
+                                                  get_filled_places('W', [], X1,1,Size, Fill). 
+
+
+
+
+%last line, pieces already in final spot
+get_filled_places('B', _, _, Y, Size,_):- Y =:= Size-1. 
+%penultimate line, pices already in final spot
+get_filled_places('B', [_ | Line],0,Y,Size,Fill):-  Y =:= Size-2,
+                                                    get_filled_places('B', Line, 1,Y,Size, Fill). 
+get_filled_places('B', [_ | []],X,Y,Size,Fill):- Y =:= Size-2, 
+                                                 X1 is X+1,
+                                                 get_filled_places('B', [], X1,1,Size, Fill). 
+
+                                                               
+                                                               
+get_filled_places(Player,[Player | Line], X, Y, Size,[X-Y | Fill]):- X1 is X+1, 
+                                                                     get_filled_places(Player, Line, X1,Y, Size,Fill). 
+                                                      
+get_filled_places(Player,[_ | Line], X, Y, Size,Fill):- X1 is X+1, 
+                                                        get_filled_places(Player, Line, X1,Y, Size,Fill). 
 
 
 
 bot(X):- valid_moves(['B',['B','B','E','B','B'],['B','E','E','E','B'],['E','E','B','E','E'],['W','E','E','E','W'],['W','W','W','W','W']],X). 
 
 empty(Empty) :- get_empty_final('W',[['B','B','E','W','B'],['B','E','E','E','W'],['E','E','B','E','E'],['W','E','E','E','W'],['W','W','W','W','W']], Empty).
+
+pieces(F) :- get_filled_board('B',[['B','B','E','W','W'],['B','E','E','E','W'],['E','E','B','E','E'],['B','E','E','E','W'],['B','W','E','W','W']], F).
+
 
