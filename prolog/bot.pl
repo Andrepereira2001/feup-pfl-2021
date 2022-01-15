@@ -87,7 +87,34 @@ Parameters:
     1. Board with player and pieces display 
     2. Value given to the game state
 */
-%evaluate_board(NewState, Value).
+/*
+vejo quais os empty dos que são o meu objetivo final e quais as minhas peças que ainda não estão no objetivo final. 
+*/
+%evaluate_board(GameState, Value).
+
+%last line
+get_empty_final('B', [Line | []], Empty):-  
+%penultimate line
+get_empty_final('B', [Line | Board], Empty):- length(Board, 1),
+                                              pos_element(Line, 0, Piece), 
+                                              
+                                              fail. 
+
+get_empty_final('W', [Line | Board], Empty):-  length(Line, Size), 
+                                               Ind is Size-1, 
+                                               length(Board, Ind), 
+                                               fail. 
+get_empty_final('W', [Line | Board], Empty):-  length(Line, Size), 
+                                               Ind is Size-2, 
+                                               length(Board, Ind). 
+
+get_empty_final(Player, [Line | Board], Empty):- get_empty_final(Player, Board, Empty). 
+
+get_empty_place(Player, [Piece | Line], X,Y, [X-Y| Empty]):- Player =/= Piece, 
+                                                             X1 is X-1, 
+                                                             get_empty_place(Player, Line, X1,Y, Empty). 
+
+get_pieces_()
 
 
 bot(X):- valid_moves(['B',['B','B','E','B','B'],['B','E','E','E','B'],['E','E','B','E','E'],['W','E','E','E','W'],['W','W','W','W','W']],X). 
