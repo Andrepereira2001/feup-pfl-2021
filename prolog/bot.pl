@@ -92,30 +92,86 @@ vejo quais os empty dos que são o meu objetivo final e quais as minhas peças q
 */
 %evaluate_board(GameState, Value).
 
-%last line
-get_empty_final('B', [Line | []], Empty):-  
-%penultimate line
-get_empty_final('B', [Line | Board], Empty):- length(Board, 1),
-                                              pos_element(Line, 0, Piece), 
-                                              
-                                              fail. 
 
+/*
+Function: Fills a list with the coordinates from the final places where the player's final pieces should be in order to finnish the game. 
+
+get_empty_final(+Player, +Board, -List)
+Parameters: 
+    1. Player whose playing
+    2. Actual Board 
+    3. List of Coordinates not filled by the Player's pieces
+*/
+%last line (Y = Size -1)
+get_empty_final('B', [Line | []], Empty):-  length(Line, L),
+                                            Y is L-1, 
+                                            get_empty_place('B', Line, 0, Y, Empty).
+
+%penultimate line (Y = Size-2)
+get_empty_final('B', [Line | Board], Empty):- length(Board, 1), 
+                                              length(Line, L), 
+                                              Y is L-2, 
+                                              add_empty_first_last('B',Line, 0, Y, FirstEmpty),
+                                              get_empty_final('B', Board, EmptyLastLine), 
+                                              append(FirstEmpty,EmptyLastLine, Empty). 
+
+%first line (Y = 0)
 get_empty_final('W', [Line | Board], Empty):-  length(Line, Size), 
                                                Ind is Size-1, 
                                                length(Board, Ind), 
-                                               fail. 
+                                               get_empty_place('W', Line, 0,0, FirstEmpty),
+                                               get_empty_final('W', Board,EmptyLastLine),
+                                               append(FirstEmpty,EmptyLastLine, Empty). 
+%second line (Y = 1)                                   
 get_empty_final('W', [Line | Board], Empty):-  length(Line, Size), 
                                                Ind is Size-2, 
-                                               length(Board, Ind). 
+                                               length(Board, Ind), 
+                                               add_empty_first_last('W',Line, 0, 1, Empty).
+                                               
 
 get_empty_final(Player, [Line | Board], Empty):- get_empty_final(Player, Board, Empty). 
 
-get_empty_place(Player, [Piece | Line], X,Y, [X-Y| Empty]):- Player =/= Piece, 
-                                                             X1 is X-1, 
+
+/*
+Function: In a specific board line get the coordinates of the players spots to be filled.  
+
+get_empty_place(+Player, +BoardLine, +X,+Y, -List)
+Parameters: 
+    1. Player whose playing
+    2. Actual Board Line to be inspected
+    3. Current board X
+    4. Current board Y
+    5. List of Coordinates not filled by the Player's pieces
+*/
+get_empty_place(_,[],_,_,_). 
+get_empty_place(Player, [Player | Line], X,Y, Empty):- X1 is X+1, 
+                                                       get_empty_place(Player, Line, X1,Y, Empty). 
+get_empty_place(Player, [Piece | Line], X,Y, [X-Y| Empty]):- X1 is X+1, 
                                                              get_empty_place(Player, Line, X1,Y, Empty). 
 
-get_pieces_()
+/*
+Function: Verify if the first and last possitions of the board can receive a Player piece
+
+add_empty_first_last(+Player, +Board, +X,+Y, -Empty)
+Parameters: 
+    1. Player whose playing
+    2. Actual Board
+    3. Current board X
+    4. Current board Y
+    5. List of Coordinates not filled by the Player's pieces
+*/
+add_empty_first_last(_,[],_,_,_).
+add_empty_first_last(Player,[Piece | Line], 0, Y,  [0-Y |Empty]):- Player \= Piece,
+                                                                   add_empty_first_last(Player, Line, 1,Y, Empty).
+
+add_empty_first_last(Player,[Piece | []], X, Y, [X-Y | Empty]):- Player \= Piece.  
+
+add_empty_first_last(Player, [Piece | Line], X,Y, Empty):-  X1 is X+1,
+                                                            add_empty_first_last(Player, Line, X1,Y, Empty).
+
 
 
 bot(X):- valid_moves(['B',['B','B','E','B','B'],['B','E','E','E','B'],['E','E','B','E','E'],['W','E','E','E','W'],['W','W','W','W','W']],X). 
+
+empty(Empty) :- get_empty_final('W',[['B','B','E','W','B'],['B','E','E','E','W'],['E','E','B','E','E'],['W','E','E','E','W'],['W','W','W','W','W']], Empty).
 
