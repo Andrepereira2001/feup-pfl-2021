@@ -13,11 +13,10 @@ Parameters:
 */
 choose_move(1, _GameState, Moves, Move):- random_select(Move, Moves, _Rest).
 
-choose_move(2, GameState, Moves, Move):-  findall(Value-Mv, (Moves,GameState,NewState)^( member(Mv, Moves),
-                                          move(GameState, Mv, NewState),
-                                          evaluate_board(NewState, Value),
-                                          nl,write(Value-Mv),nl),V), trace, 
-                                          nl,write(V),nl. 
+choose_move(2, GameState, Moves, Move):-  setof(Value-Mv, (Moves,GameState,NewState)^( member(Mv, Moves),
+                                            move(GameState, Mv, NewState),
+                                            evaluate_board(NewState, Value)),
+                                            [_V-Move | _]).
 
 /*
 Function: Depending on the next player to play pieces, the pc has set of valid moves on the current board situation. 
@@ -39,7 +38,7 @@ Parameters:
     2. List of Moves from where to choose
     3. List of Valid Moves from Moves
 */
-go_through_moves(_,[],_).
+go_through_moves(_,[],[]).
 go_through_moves(GameState,[PiecePos | Pieces],ValidMoves):- findall([PiecePos, [X,Y]], validate_move(GameState, [PiecePos, [X, Y]]), NewList),    
                                                         go_through_moves(GameState, Pieces, OldList),
                                                         append(NewList, OldList, ValidMoves).
@@ -94,18 +93,10 @@ vejo quais os empty dos que são o meu objetivo final e quais as minhas peças q
 */
 evaluate_board(['W' | Board], Value):- get_empty_final('B', Board, Empty),
                                          get_filled_board('B',Board, Filled),
-                                         nl,
-                                         write(Empty), 
-                                         write(Filled),
-                                         nl,
                                          get_value(Empty,Filled,Value), !.
 
 evaluate_board(['B' | Board], Value):-   get_empty_final('W', Board, Empty),
                                          get_filled_board('W',Board, Filled),
-                                         nl,
-                                         write(Empty), 
-                                         write(Filled),
-                                         nl,
                                          get_value(Empty,Filled,Value), !.
 
 
@@ -251,9 +242,9 @@ Parameters:
     2. Coordinates of the filled places
     3. Value of the board
 */
-get_value([],_,0).
-get_value([X-Y | Empty],Filled,Value):- nl, write(X-Y-Empty-Filled-Value), nl, 
-                                        small_distance(X,Y,Filled,Dist),
+get_value([],Filled,V):- length(Filled,F),
+                         V is 50*F.
+get_value([X-Y | Empty],Filled,Value):- small_distance(X,Y,Filled,Dist),
                                         get_value(Empty,Filled,V),
                                         Value is Dist + V,!.
 
