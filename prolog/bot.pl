@@ -243,7 +243,7 @@ Parameters:
     3. Value of the board
 */
 get_value([],Filled,V):- length(Filled,F),
-                         V is 50*F.
+                         V is 100*F.
 get_value([X-Y | Empty],Filled,Value):- small_distance(X,Y,Filled,Dist),
                                         get_value(Empty,Filled,V),
                                         Value is Dist + V,!.
