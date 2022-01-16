@@ -13,9 +13,11 @@ Parameters:
 */
 choose_move(1, _GameState, Moves, Move):- random_select(Move, Moves, _Rest).
 
-choose_move(2, GameState, Moves, Move):-  setof(Value-Mv, NewState^( member(Mv, Moves),
+choose_move(2, GameState, Moves, Move):-  findall(Value-Mv, (Moves,GameState,NewState)^( member(Mv, Moves),
                                           move(GameState, Mv, NewState),
-                                          evaluate_board(NewState, Value) ), [_V-Move|_]).
+                                          evaluate_board(NewState, Value),
+                                          nl,write(Value-Mv),nl),V), trace, 
+                                          nl,write(V),nl. 
 
 /*
 Function: Depending on the next player to play pieces, the pc has set of valid moves on the current board situation. 
@@ -80,7 +82,7 @@ find_in_line(Player, [_ | Line], X, Y, List):- X1 is X+1, !,
 
 
 /*
-Function: Evalutes a given GameState.  
+Function: Evaluates a given GameState.  
 
 evaluate_board(+GameState, -Value)
 Parameters: 
@@ -90,7 +92,21 @@ Parameters:
 /*
 vejo quais os empty dos que são o meu objetivo final e quais as minhas peças que ainda não estão no objetivo final. 
 */
-%evaluate_board(GameState, Value).
+evaluate_board(['W' | Board], Value):- get_empty_final('B', Board, Empty),
+                                         get_filled_board('B',Board, Filled),
+                                         nl,
+                                         write(Empty), 
+                                         write(Filled),
+                                         nl,
+                                         get_value(Empty,Filled,Value), !.
+
+evaluate_board(['B' | Board], Value):-   get_empty_final('W', Board, Empty),
+                                         get_filled_board('W',Board, Filled),
+                                         nl,
+                                         write(Empty), 
+                                         write(Filled),
+                                         nl,
+                                         get_value(Empty,Filled,Value), !.
 
 
 /*
@@ -143,7 +159,7 @@ Parameters:
     4. Current board Y
     5. List of Coordinates not filled by the Player's pieces
 */
-get_empty_place(_,[],_,_,_). 
+get_empty_place(_,[],_,_,[]). 
 get_empty_place(Player, [Player | Line], X,Y, Empty):- X1 is X+1, 
                                                        get_empty_place(Player, Line, X1,Y, Empty). 
 get_empty_place(Player, [_ | Line], X,Y, [X-Y| Empty]):- X1 is X+1, 
@@ -171,16 +187,15 @@ add_empty_first_last(Player, [_ | Line], X,Y, Empty):-  X1 is X+1,
 
 
 /*
-Function: In a specific board of the players pieces.  
+Function: In a specific board get the coordinates of the players pieces.  
 get_filled_board(+Player, +Board, -Fill)
 
 Parameters:
     1. Player whose playing
     2. Actual Board to be inspected
     3. List of Coordinates where the Player's pieces are
-
 */
-get_filled_board(_, [],_).
+get_filled_board(_, [],[]).
 get_filled_board(Player, [Line | Board], Fill):- length(Line, L),
                                                  length(Board, B),
                                                  Y is L-B-1,
@@ -202,19 +217,16 @@ Parameters:
     5. Size of board
     6. List of Coordinates where the Player's pieces are
 */
-get_filled_places(_, [], _, _, _, _).
+get_filled_places(_, [], _, _, _, []).
 %first line, pieces already in final spot (do not add to list)
-get_filled_places('W', _, _, 0,_,_). 
+get_filled_places('W', _, _, 0,_,[]). 
 %second line, pieces already in final spots in the end and the beginning of the line (do not add to list)
 get_filled_places('W', [_ | Line],0,1, Size,Fill):- get_filled_places('W', Line, 1,1,Size, Fill). 
 get_filled_places('W', [_ | []],X,1, Size,Fill):- X1 is X+1, 
                                                   get_filled_places('W', [], X1,1,Size, Fill). 
 
-
-
-
 %last line, pieces already in final spot
-get_filled_places('B', _, _, Y, Size,_):- Y =:= Size-1. 
+get_filled_places('B', _, _, Y, Size,[]):- Y =:= Size-1. 
 %penultimate line, pices already in final spot
 get_filled_places('B', [_ | Line],0,Y,Size,Fill):-  Y =:= Size-2,
                                                     get_filled_places('B', Line, 1,Y,Size, Fill). 
@@ -222,14 +234,47 @@ get_filled_places('B', [_ | []],X,Y,Size,Fill):- Y =:= Size-2,
                                                  X1 is X+1,
                                                  get_filled_places('B', [], X1,1,Size, Fill). 
 
-                                                               
-                                                               
+                                                                           
 get_filled_places(Player,[Player | Line], X, Y, Size,[X-Y | Fill]):- X1 is X+1, 
                                                                      get_filled_places(Player, Line, X1,Y, Size,Fill). 
                                                       
 get_filled_places(Player,[_ | Line], X, Y, Size,Fill):- X1 is X+1, 
                                                         get_filled_places(Player, Line, X1,Y, Size,Fill). 
 
+
+/*
+Function: Calculates the value of the board, by calculating the distances between the pieces that are not yet in a final spot and the spots available. 
+
+get_value(+Empty, +Filled, -Value)
+Parameters:
+    1. Coordinates of the empty places
+    2. Coordinates of the filled places
+    3. Value of the board
+*/
+get_value([],_,0).
+get_value([X-Y | Empty],Filled,Value):- nl, write(X-Y-Empty-Filled-Value), nl, 
+                                        small_distance(X,Y,Filled,Dist),
+                                        get_value(Empty,Filled,V),
+                                        Value is Dist + V,!.
+
+
+/*
+Function: Calculates the smallest distance of the point to one of the valid houses. 
+
+get_value(+X, +Y, +Filled, -Dist)
+Parameters:
+    1. X of the place that is being analised
+    2. Y of the place that is being analised
+    3. Coordinates of the filled places
+    4. Smallest distance to one of the houses
+*/
+small_distance(_,_,[],1000).
+small_distance(X,Y,[X1-Y1 | Filled], Dist):- (((X mod 2) + (Y mod 2)) mod 2) =:= (((X1 mod 2) + (Y1 mod 2)) mod 2), 
+                                             Distance is (X1-X)^2 + (Y1-Y)^2,
+                                             small_distance(X,Y,Filled, SavedDist),! ,
+                                             Dist is min(Distance,SavedDist),!.
+small_distance(X,Y,[_ | Filled],Dist):-small_distance(X,Y,Filled,Dist).
+                                             
 
 
 bot(X):- valid_moves(['B',['B','B','E','B','B'],['B','E','E','E','B'],['E','E','B','E','E'],['W','E','E','E','W'],['W','W','W','W','W']],X). 
@@ -238,4 +283,5 @@ empty(Empty) :- get_empty_final('W',[['B','B','E','W','B'],['B','E','E','E','W']
 
 pieces(F) :- get_filled_board('B',[['B','B','E','W','W'],['B','E','E','E','W'],['E','E','B','E','E'],['B','E','E','E','W'],['B','W','E','W','W']], F).
 
+evalu(V) :- evaluate_board(['B',['B','W','E','W','W'],['B','E','E','E','W'],['E','E','B','W','E'],['B','E','E','E','E'],['B','E','E','W','W']], V).
 
