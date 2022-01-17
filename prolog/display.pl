@@ -324,7 +324,7 @@ input_player(Player):-skip_line,
 /*
 Function: Sets the player to the chosen (human or computer) and if it is a computer asks for the difficulty level of the game mode (1 or 2).  
 
-input_player(+Opt,-Player)
+set_player(+Opt,-Player)
 Parameters: 
     1. Option chosen
     2. Chosen player type (human or computer and level)
