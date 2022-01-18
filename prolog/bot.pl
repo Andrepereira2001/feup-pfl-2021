@@ -15,7 +15,8 @@ choose_move(1, _GameState, Moves, Move):- random_select(Move, Moves, _Rest).
 
 choose_move(2, GameState, Moves, Move):-  setof(Value-Mv, (Moves,GameState,NewState)^( member(Mv, Moves),
                                             move(GameState, Mv, NewState),
-                                            evaluate_board(NewState, Value)),
+                                            evaluate_board(NewState, Value), nl,
+                                            write(Value-Mv), nl),
                                             [_V-Move | _]).
 
 /*
@@ -91,12 +92,12 @@ Parameters:
 /*
 vejo quais os empty dos que são o meu objetivo final e quais as minhas peças que ainda não estão no objetivo final. 
 */
-evaluate_board(['W' | Board], Value):- get_empty_final('B', Board, Empty),
-                                         get_filled_board('B',Board, Filled),
+evaluate_board(['W' | Board], Value):- get_empty_final('B', Board, Empty),  
+                                         get_filled_board('B',Board, Filled), !, 
                                          get_value(Empty,Filled,Value), !.
 
-evaluate_board(['B' | Board], Value):-   get_empty_final('W', Board, Empty),
-                                         get_filled_board('W',Board, Filled),
+evaluate_board(['B' | Board], Value):-   get_empty_final('W', Board, Empty), 
+                                         get_filled_board('W',Board, Filled),!,
                                          get_value(Empty,Filled,Value), !.
 
 
@@ -167,7 +168,7 @@ Parameters:
     4. Current board Y
     5. List of Coordinates not filled by the Player's pieces
 */
-add_empty_first_last(_,[],_,_,_).
+add_empty_first_last(_,[],_,_,[]).
 add_empty_first_last(Player,[Piece | Line], 0, Y,  [0-Y |Empty]):- Player \= Piece,
                                                                    add_empty_first_last(Player, Line, 1,Y, Empty).
 
@@ -242,13 +243,20 @@ Parameters:
     2. Coordinates of the filled places
     3. Value of the board
 */
-get_value([],Filled,V):- length(Filled,F),
-                         V is 100*F.
-get_value([X-Y | Empty],Filled,Value):- small_distance(X,Y,Filled,Dist),
-                                        get_value(Empty,Filled,V),
-                                        Value is Dist + V,!.
+get_value([],Filled,0).
+get_value([X-Y | Empty],Filled,Value):- small_distance(X,Y,Filled,X1-Y1/Dist),
+                                        remove_elem(Filled,X1-Y1,Rest), 
+                                        get_value(Empty,Rest,V),
+                                        Value is Dist + V + 100,!.
 
 
+remove_elem([],_,[]). 
+remove_elem([Elem | List], Elem, List). 
+remove_elem([Value |List], Elem,[Value | Ret]):- remove_elem(List, Elem, Ret). 
+
+my_min(X1-Y1/D1, X2-Y2/D2, X1-Y1/D1):- D1 < D2, !. 
+my_min(X1-Y1/D1, X2-Y2/D2, X2-Y2/D2). 
+                 
 /*
 Function: Calculates the smallest distance of the point to one of the valid houses. 
 
@@ -259,11 +267,13 @@ Parameters:
     3. Coordinates of the filled places
     4. Smallest distance to one of the houses
 */
-small_distance(_,_,[],1000).
+
+small_distance(_,_,[],_-_/10000).
 small_distance(X,Y,[X1-Y1 | Filled], Dist):- (((X mod 2) + (Y mod 2)) mod 2) =:= (((X1 mod 2) + (Y1 mod 2)) mod 2), 
                                              Distance is (X1-X)^2 + (Y1-Y)^2,
-                                             small_distance(X,Y,Filled, SavedDist),! ,
-                                             Dist is min(Distance,SavedDist),!.
+                                             small_distance(X,Y,Filled, X2-Y2/SavedDist),!,
+                                             my_min(X1-Y1/Distance,X2-Y2/SavedDist,Dist).                                               
+                                             
 small_distance(X,Y,[_ | Filled],Dist):-small_distance(X,Y,Filled,Dist).
                                              
 
@@ -276,3 +286,4 @@ pieces(F) :- get_filled_board('B',[['B','B','E','W','W'],['B','E','E','E','W'],[
 
 evalu(V) :- evaluate_board(['B',['B','W','E','W','W'],['B','E','E','E','W'],['E','E','B','W','E'],['B','E','E','E','E'],['B','E','E','W','W']], V).
 
+smDist(Dist):- small_distance(0,0,[2-3, 3-4, 2-2, 4-4], Dist). 
