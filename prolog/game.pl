@@ -64,37 +64,33 @@ Parameters:
 validate_shift(Board, [NextX, NextY | _ ]):- pos_element(Board, NextY, Row), 
                                             pos_element(Row, NextX, Piece),
                                             Piece == 'E'.
+
+/*
+Function: Possible moves in x and y axis. 
+
+delta(+X, +Y).
+Parameters: 
+    1. X coordinate. 
+    2. Y coordinate. 
+*/
+delta(1,-1). 
+delta(1,1).
+delta(-1,1).
+delta(-1,-1).
+
 /*
 Function: Validates if the move is valid, recurring to validate_player and validate_shift. 
 
 validate_move(+GameState, +Move).
 Parameters: 
-    1. Board with nextplayer to play and pieces display
+    1. 
     2. List with actual Piece position and shift move
 */
-validate_move([Player | Board], [ [PieceX , PieceY | [] ] , [-1, -1 | [] ] | [] ]):- validate_player([Player | Board], [PieceX , PieceY]), 
-                                                                                  NextX is PieceX -1,
-                                                                                  NextY is PieceY -1,
-                                                                                  validate_shift(Board, [NextX , NextY]). 
-validate_move([Player | Board], [ [PieceX , PieceY | [] ] , [1, -1 | [] ] | [] ]):-  validate_player([Player | Board], [PieceX , PieceY]), 
-                                                                                  NextX is PieceX +1,
-                                                                                  NextY is PieceY -1,
-                                                                                  validate_shift(Board, [NextX , NextY]).
-validate_move([Player | Board], [ [PieceX , PieceY | [] ] , [-1, 1 | [] ] | [] ]):-  validate_player([Player | Board], [PieceX , PieceY]), 
-                                                                                  NextX is PieceX -1,
-                                                                                  NextY is PieceY + 1,
-                                                                                  validate_shift(Board, [NextX , NextY]).
-validate_move([Player | Board], [ [PieceX , PieceY | [] ] , [1, 1 | [] ] | [] ]):-   validate_player([Player | Board], [PieceX , PieceY]), 
-                                                                                  NextX is PieceX + 1,
-                                                                                  NextY is PieceY + 1,
-                                                                                  validate_shift(Board, [NextX , NextY]).
-                                                                                  /*
-validate_move([Player | Board], [ [PieceX , PieceY | _ ] , [DeltaX, DeltaY | _ ] | _ ]):- (DeltaX == -1; DeltaX == 1),
-                                                                                         (DeltaY == -1; DeltaY == 1),
-                                                                                        validate_player([Player | Board], [PieceX , PieceY]), 
-                                                                                        NextX is PieceX + DeltaX,
-                                                                                        NextY is PieceY + DeltaY,
-                                                                                        validate_shift(Board, [NextX , NextY]). */
+validate_move([Player | Board], [ [PieceX , PieceY | [] ] , [DeltaX, DeltaY | [] ] | [] ]):- delta(DeltaX,DeltaY), 
+                                                                                            validate_player([Player | Board], [PieceX , PieceY]), 
+                                                                                            NextX is PieceX + DeltaX,
+                                                                                            NextY is PieceY + DeltaY,
+                                                                                            validate_shift(Board, [NextX , NextY]). 
 
 /*
 Function: Modifies the board in order to make the given move. 
