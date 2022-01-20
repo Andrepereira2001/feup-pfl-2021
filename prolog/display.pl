@@ -161,7 +161,7 @@ ask_piece(X, Y):-   nl,
                     get_code(_X),
                     X is _X - 65,
                     peek_code(10),
-                    skip_line.
+                    skip_line,!.
 
 ask_piece(_,_):- skip_line,
                  fail.
@@ -182,7 +182,7 @@ ask_move(X, Y):-    nl,
                     get_code(_X),
                     X is _X - 65,
                     peek_code(10),
-                    skip_line.
+                    skip_line,!.
                     
 ask_move(_,_):- skip_line,
                 fail.

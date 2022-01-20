@@ -244,9 +244,10 @@ Parameters:
     2. Type of Player to play (human or pc)
     3. Move to receive
 */
-choose_move([Player | Board], human, [[PieceX,PieceY],[DeltaX,DeltaY]]):- ask_piece(PieceX, PieceY), 
+choose_move([Player | Board], human, [[PieceX,PieceY],[DeltaX,DeltaY]]):- write('again'),
+                                                                          ask_piece(PieceX, PieceY),
                                                                           validate_player([Player | Board], [PieceX, PieceY]),
-                                                                          ask_move(MoveX, MoveY), 
+                                                                          ask_move(MoveX, MoveY),
                                                                           DeltaX is MoveX - PieceX,
                                                                           DeltaY is MoveY - PieceY,
                                                                           validate_move([Player | Board],[[PieceX,PieceY],[DeltaX,DeltaY]]). 
