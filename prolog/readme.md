@@ -145,6 +145,8 @@ O inverso é realizado se for a vez do jogador **black ('B')** jogar, indicando 
  
 ### __Lista de jogadas válidas__
 
+
+
 ### __Avaliação do estado de jogo *__
 
 ### __Jogada do Computador__ 

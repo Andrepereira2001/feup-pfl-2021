@@ -252,7 +252,8 @@ choose_move([Player | Board], human, [[PieceX,PieceY],[DeltaX,DeltaY]]):- ask_pi
                                                                           validate_move([Player | Board],[[PieceX,PieceY],[DeltaX,DeltaY]]). 
 
 choose_move(GameState, computer-Level, Move):- valid_moves(GameState, Moves),
-                                               choose_move(Level, GameState, Moves, Move).
+                                               choose_move(Level, GameState, Moves, Move),
+                                               sleep(1).
                         
 
 choose_move(Board,Player,Move):-write('Invalid input'),

@@ -1,5 +1,6 @@
 :- use_module(library(random)).
 :- use_module(library(lists)).
+:- use_module(library(system)).
 
 /*
 Function: Depending on the difficulty level the pc chooses one move from the available moves for the palyer it is representing. 
@@ -14,10 +15,32 @@ Parameters:
 choose_move(1, _GameState, Moves, Move):- random_select(Move, Moves, _Rest).
 
 choose_move(2, GameState, Moves, Move):-  setof(Value-Mv, (Moves,GameState,NewState)^( member(Mv, Moves),
-                                            move(GameState, Mv, NewState),
-                                            evaluate_board(NewState, Value), nl,
-                                            write(Value-Mv), nl),
-                                            [_V-Move | _]).
+                                                                                        move(GameState, Mv, NewState),
+                                                                                        evaluate_board(NewState, Value)),
+                                                List),
+                                                randomize_best_moves(List, Move).
+
+/*Function: Receives the list of valid moves and returns a random move with the same value
+
+get_same_values(+List, +Value, -Result)
+Parameters: 
+    1. List with all the possibel moves and respective board values
+    3. Random move that have the best possibel value
+*/
+randomize_best_moves([V-M |List], Move):- get_same_values([V-M |List], V, Moves),
+                                             random_select(Move, Moves, _Rest).
+                                             
+/*Function: Receives the list of valid moves and returns the moves that have the same value
+
+get_same_values(+List, +Value, -Result)
+Parameters: 
+    1. List with all the possibel moves and respective board values
+    2. Smallest board value
+    3. Moves with the same values
+*/
+get_same_values([], _, []).
+get_same_values([Value-Move|List], Value, [Move | Moves]):- get_same_values(List, Value, Moves).
+get_same_values(_, _, []).
 
 /*
 Function: Depending on the next player to play pieces, the pc has set of valid moves on the current board situation. 
