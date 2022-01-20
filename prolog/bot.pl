@@ -16,7 +16,7 @@ choose_move(1, _GameState, Moves, Move):- random_select(Move, Moves, _Rest).
 
 choose_move(2, GameState, Moves, Move):-  setof(Value-Mv, (Moves,GameState,NewState)^( member(Mv, Moves),
                                                                                         move(GameState, Mv, NewState),
-                                                                                        evaluate_board(NewState, Value)),
+                                                                                        value(NewState, Value)),
                                                 List),
                                                 randomize_best_moves(List, Move).
 
@@ -107,7 +107,7 @@ find_in_line(Player, [_ | Line], X, Y, List):- X1 is X+1, !,
 /*
 Function: Evaluates a given GameState.  
 
-evaluate_board(+GameState, -Value)
+value(+GameState, -Value)
 Parameters: 
     1. Board with player and pieces display 
     2. Value given to the game state
@@ -115,11 +115,11 @@ Parameters:
 /*
 vejo quais os empty dos que são o meu objetivo final e quais as minhas peças que ainda não estão no objetivo final. 
 */
-evaluate_board(['W' | Board], Value):- get_empty_final('B', Board, Empty),  
+value(['W' | Board], Value):- get_empty_final('B', Board, Empty),  
                                          get_filled_board('B',Board, Filled), !, 
                                          get_value(Empty,Filled,Value), !.
 
-evaluate_board(['B' | Board], Value):-   get_empty_final('W', Board, Empty), 
+value(['B' | Board], Value):-   get_empty_final('W', Board, Empty), 
                                          get_filled_board('W',Board, Filled),!,
                                          get_value(Empty,Filled,Value), !.
 
@@ -307,6 +307,6 @@ empty(Empty) :- get_empty_final('W',[['B','B','E','W','B'],['B','E','E','E','W']
 
 pieces(F) :- get_filled_board('B',[['B','B','E','W','W'],['B','E','E','E','W'],['E','E','B','E','E'],['B','E','E','E','W'],['B','W','E','W','W']], F).
 
-evalu(V) :- evaluate_board(['B',['B','W','E','W','W'],['B','E','E','E','W'],['E','E','B','W','E'],['B','E','E','E','E'],['B','E','E','W','W']], V).
+evalu(V) :- value(['B',['B','W','E','W','W'],['B','E','E','E','W'],['E','E','B','W','E'],['B','E','E','E','E'],['B','E','E','W','W']], V).
 
 smDist(Dist):- small_distance(0,0,[2-3, 3-4, 2-2, 4-4], Dist). 
