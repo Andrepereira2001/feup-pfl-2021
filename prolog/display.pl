@@ -188,34 +188,6 @@ ask_move(_,_):- skip_line,
                 fail.
 
 /*
-**              Five Field Kono              **  
- 
-            A   B   C   D   E   F   
-          +---+---+---+---+---+---+                                                                  
-        a | X | B | B | B | B | B |          0-0 -> 5
-          +---+---+---+---+---+---+                               
-        b | B |   |   |   | Y | B |  4-1 -> 4  (4-0)^2 + (1-5)^2 = 16+16=32
-          +---+---+---+---+---+---+                               
-        c |   |   | Z |   |   |   |          2-2 -> 3 moves (1-2)^2 + (5-2)^2 = 1+9=10
-          +---+---+---+---+---+---+                               
-        d |   |   |   |   |   |   |
-          +---+---+---+---+---+---+                               
-        e | W |   |   |   | Z | W |          4-4 -> 3 moves (1-4)^2 + (4-5)^2 = 9+1=10
-          +---+---+---+---+---+---+                               
-        f | Y | Z | W | W | W | W |  0-5     1-5
-          +---+---+---+---+---+---+   
-
-X->par Y-par --- X->impar Y->impar  (x mod 2 + y mod 2) mod 2
-X->impar Y->par --- X->par Y->impar                        
-
-NEXT PLAYER: WHITE/BLACK
-
-PIECE TO MOVE (a-A): 
-
-WHERE TO MOVE (b-B):
-*/
-
-/*
 Function: Display the menu screen.  
 
 display_menu(+WhiteP, +BlackP, +Size)
@@ -446,3 +418,35 @@ show_moves([[[X,Y],[DX,DY]] | Moves]):- nl,
                                         put_code(NX),
                                         show_moves(Moves).
 
+
+
+
+
+
+/*
+**              Five Field Kono              **  
+ 
+            A   B   C   D   E   F   
+          +---+---+---+---+---+---+                                                                  
+        a | X | B | B | B | B | B |          0-0 -> 5
+          +---+---+---+---+---+---+                               
+        b | B |   |   |   | Y | B |  4-1 -> 4  (4-0)^2 + (1-5)^2 = 16+16=32
+          +---+---+---+---+---+---+                               
+        c |   |   | Z |   |   |   |          2-2 -> 3 moves (1-2)^2 + (5-2)^2 = 1+9=10
+          +---+---+---+---+---+---+                               
+        d |   |   |   |   |   |   |
+          +---+---+---+---+---+---+                               
+        e | W |   |   |   | Z | W |          4-4 -> 3 moves (1-4)^2 + (4-5)^2 = 9+1=10
+          +---+---+---+---+---+---+                               
+        f | Y | Z | W | W | W | W |  0-5     1-5
+          +---+---+---+---+---+---+   
+
+X->par Y-par --- X->impar Y->impar  (x mod 2 + y mod 2) mod 2
+X->impar Y->par --- X->par Y->impar                        
+
+NEXT PLAYER: WHITE/BLACK
+
+PIECE TO MOVE (a-A): 
+
+WHERE TO MOVE (b-B):
+*/

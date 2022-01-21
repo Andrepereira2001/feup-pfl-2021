@@ -64,8 +64,8 @@ Parameters:
 */
 go_through_moves(_,[],[]).
 go_through_moves(GameState,[PiecePos | Pieces],ValidMoves):- findall([PiecePos, [X,Y]], validate_move(GameState, [PiecePos, [X, Y]]), NewList),    
-                                                        go_through_moves(GameState, Pieces, OldList),
-                                                        append(NewList, OldList, ValidMoves).
+                                                             go_through_moves(GameState, Pieces, OldList),
+                                                             append(NewList, OldList, ValidMoves).
 
 /*
 Function: Gives the positions in board where the player have pieces.  
@@ -112,16 +112,13 @@ Parameters:
     1. Board with player and pieces display 
     2. Value given to the game state
 */
-/*
-vejo quais os empty dos que são o meu objetivo final e quais as minhas peças que ainda não estão no objetivo final. 
-*/
 value(['W' | Board], Value):- get_empty_final('B', Board, Empty),  
-                                         get_filled_board('B',Board, Filled), !, 
-                                         get_value(Empty,Filled,Value), !.
+                              get_filled_board('B',Board, Filled), !, 
+                              get_value(Empty,Filled,Value), !.
 
-value(['B' | Board], Value):-   get_empty_final('W', Board, Empty), 
-                                         get_filled_board('W',Board, Filled),!,
-                                         get_value(Empty,Filled,Value), !.
+value(['B' | Board], Value):- get_empty_final('W', Board, Empty), 
+                              get_filled_board('W',Board, Filled),!,
+                              get_value(Empty,Filled,Value), !.
 
 
 /*
@@ -300,13 +297,3 @@ small_distance(X,Y,[X1-Y1 | Filled], Dist):- (((X mod 2) + (Y mod 2)) mod 2) =:=
 small_distance(X,Y,[_ | Filled],Dist):-small_distance(X,Y,Filled,Dist).
                                              
 
-
-bot(X):- valid_moves(['B',['B','B','E','B','B'],['B','E','E','E','B'],['E','E','B','E','E'],['W','E','E','E','W'],['W','W','W','W','W']],X). 
-
-empty(Empty) :- get_empty_final('W',[['B','B','E','W','B'],['B','E','E','E','W'],['E','E','B','E','E'],['W','E','E','E','W'],['W','W','W','W','W']], Empty).
-
-pieces(F) :- get_filled_board('B',[['B','B','E','W','W'],['B','E','E','E','W'],['E','E','B','E','E'],['B','E','E','E','W'],['B','W','E','W','W']], F).
-
-evalu(V) :- value(['B',['B','W','E','W','W'],['B','E','E','E','W'],['E','E','B','W','E'],['B','E','E','E','E'],['B','E','E','W','W']], V).
-
-smDist(Dist):- small_distance(0,0,[2-3, 3-4, 2-2, 4-4], Dist). 

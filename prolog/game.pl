@@ -363,14 +363,3 @@ play()
 */
 play:- menu_loop(human,human,5).
         
-
-
-func(X,Y):- validate_move(['B',['B','B','B','B','B'],['B','E','E','E','B'],['E','E','E','E','E'],['W','E','E','E','W'],['W','W','W','W','W']],[[2,0],[X,Y]]). 
-
-func2(M,G):- validate_player(['W',['B','B','B','B','B'],['B','E','E','E','B'],['E','E','E','E','E'],['W','E','E','E','W'],['W','W','W','W','W']],M). 
-
-overW(W):- game_over(['B',['W','W','W','W','W'],['W','E','E','E','W'],['E','E','B','E','E'],['B','E','E','E','B'],['E','B','B','B','B']],W). 
-
-overB(W):- game_over(['W',['W','W','E','W','W'],['W','E','W','E','W'],['E','E','E','E','E'],['B','E','E','E','B'],['B','B','B','B','B']],W). 
-
-choseMe(Moves):-findall(Move, move(['B',['B','B','B','B','B'],['B','E','E','E','B'],['E','E','E','E','E'],['W','E','E','E','W'],['W','W','W','W','W']], Move, NewState), Moves).
