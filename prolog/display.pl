@@ -258,11 +258,11 @@ Parameters:
     1. Chosen board number of columns/rows
 */
 input_board_size(Size):- nl,nl,
-                        write('Size of board must be an integer between 4 and 15'),
+                        write('Size of board must be an integer between 5 and 15'),
                         nl,
                         write('Board Size: '),
                         read_number(Size,0),
-                        Size >= 4,
+                        Size >= 5,
                         Size =< 15.
 input_board_size(Size):-write('Invalid Input'),
                         input_board_size(Size).

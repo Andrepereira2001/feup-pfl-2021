@@ -187,6 +187,8 @@ Após recolhidas as jogadas válidas para o jogador atual é utilizada a funçã
 
 - No caso de `Level` 2 será calculado o `Value` associado ao board após a realização de cada jogada da lista de `Moves`. Estes valores à medida que vão sendo calculados serão ordenados devido ao uso do predicado `setof`. Com a lista de moves organizada, fazemos a chamada ao predicado `randomize_best_moves/2` que escolhe uma `Move` aleatória entre todas as `Moves` com o menor value existente.
 
+> Nota: ao jogar computador vs computador há uma pequena possibilidade que estes se bloqueiem um ao outro a partir de um certo momento do jogo, visto que a jogada ótima é única e bloqueia o adversário, obrigando o a recuar. 
+
 ## Conclusões
 
 Concluímos que este trabalho foi importante para adquirirmos os principais conhecimentos da linguagem lógica de prolog e permitiu-nos dar os primeiros passos num paradigma que consideramos útil e importante para o nosso desenvolvimento como engenheiros informáticos. 
