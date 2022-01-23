@@ -263,7 +263,7 @@ Parameters:
     2. Coordinates of the filled places
     3. Value of the board
 */
-get_value([],Filled,0).
+get_value([],_,0).
 get_value([X-Y | Empty],Filled,Value):- small_distance(X,Y,Filled,X1-Y1/Dist),
                                         remove_elem(Filled,X1-Y1,Rest), 
                                         get_value(Empty,Rest,V),
@@ -274,8 +274,8 @@ remove_elem([],_,[]).
 remove_elem([Elem | List], Elem, List). 
 remove_elem([Value |List], Elem,[Value | Ret]):- remove_elem(List, Elem, Ret). 
 
-my_min(X1-Y1/D1, X2-Y2/D2, X1-Y1/D1):- D1 < D2, !. 
-my_min(X1-Y1/D1, X2-Y2/D2, X2-Y2/D2). 
+my_min(X1-Y1/D1, _-_/D2, X1-Y1/D1):- D1 < D2, !. 
+my_min(_,D, D). 
                  
 /*
 Function: Calculates the smallest distance of the point to one of the valid houses. 

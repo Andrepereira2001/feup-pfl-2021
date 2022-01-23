@@ -327,7 +327,7 @@ congratulate(+Winner)
 Parameters: 
     1. 'B' - Black or 'W' - White
 */
-congratulate(Winner):- nl,
+congratulate(_):- nl,
                        write('                     _   _   _           __          ___                         _         '),
                        nl, 
                        write('     /\\             | | | | | |          \\ \\        / (_)                       (_) '),
