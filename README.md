@@ -1,7 +1,5 @@
 # feup-pfl-2021
-Programação Funcional e em Lógica project
-
-#
+Logical and functional programming projects
 
 ## Haskell - Project 1
 Implementation of basic operation for a numeric data type based on lists.
